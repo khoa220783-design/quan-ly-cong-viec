@@ -1,14 +1,114 @@
 [
   {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "title",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "desc",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "deadline",
+        "type": "uint256"
+      }
+    ],
+    "name": "TaskCreated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
+      }
+    ],
+    "name": "TaskDeleted",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "status",
+        "type": "bool"
+      }
+    ],
+    "name": "TaskStatusChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "title",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "desc",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "deadline",
+        "type": "uint256"
+      }
+    ],
+    "name": "TaskUpdated",
+    "type": "event"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_id",
+        "name": "id",
         "type": "uint256"
       },
       {
         "internalType": "bool",
-        "name": "_trangThai",
+        "name": "status",
         "type": "bool"
       }
     ],
@@ -34,12 +134,12 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_id",
+        "name": "id",
         "type": "uint256"
       },
       {
         "internalType": "address",
-        "name": "_nguoiNhan",
+        "name": "to",
         "type": "address"
       }
     ],
@@ -49,291 +149,44 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "layBalanceContract",
-    "outputs": [
+    "inputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "id",
         "type": "uint256"
       }
     ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
+    "name": "getTaskInfo",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "o",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "a",
+        "type": "address"
+      },
       {
         "internalType": "uint256",
-        "name": "_id",
+        "name": "d",
         "type": "uint256"
-      }
-    ],
-    "name": "layChiTietCongViec",
-    "outputs": [
+      },
       {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "id",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "owner",
-            "type": "address"
-          },
-          {
-            "internalType": "string",
-            "name": "tieuDe",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "moTa",
-            "type": "string"
-          },
-          {
-            "internalType": "uint256",
-            "name": "hanChot",
-            "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "daHoanThanh",
-            "type": "bool"
-          },
-          {
-            "internalType": "uint256",
-            "name": "tienThuong",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "nguoiDuocGan",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "thoiGianTao",
-            "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "daNhanThuong",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct TaskManager.CongViec",
-        "name": "",
-        "type": "tuple"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
+        "internalType": "uint256",
+        "name": "r",
+        "type": "uint256"
+      },
       {
-        "internalType": "address",
-        "name": "_nguoi",
-        "type": "address"
-      }
-    ],
-    "name": "layCongViecDuocGan",
-    "outputs": [
+        "internalType": "bool",
+        "name": "c",
+        "type": "bool"
+      },
       {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "id",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "owner",
-            "type": "address"
-          },
-          {
-            "internalType": "string",
-            "name": "tieuDe",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "moTa",
-            "type": "string"
-          },
-          {
-            "internalType": "uint256",
-            "name": "hanChot",
-            "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "daHoanThanh",
-            "type": "bool"
-          },
-          {
-            "internalType": "uint256",
-            "name": "tienThuong",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "nguoiDuocGan",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "thoiGianTao",
-            "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "daNhanThuong",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct TaskManager.CongViec[]",
-        "name": "",
-        "type": "tuple[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_owner",
-        "type": "address"
-      }
-    ],
-    "name": "layCongViecCuaToi",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "id",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "owner",
-            "type": "address"
-          },
-          {
-            "internalType": "string",
-            "name": "tieuDe",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "moTa",
-            "type": "string"
-          },
-          {
-            "internalType": "uint256",
-            "name": "hanChot",
-            "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "daHoanThanh",
-            "type": "bool"
-          },
-          {
-            "internalType": "uint256",
-            "name": "tienThuong",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "nguoiDuocGan",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "thoiGianTao",
-            "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "daNhanThuong",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct TaskManager.CongViec[]",
-        "name": "",
-        "type": "tuple[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "layTatCaCongViec",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "id",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "owner",
-            "type": "address"
-          },
-          {
-            "internalType": "string",
-            "name": "tieuDe",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "moTa",
-            "type": "string"
-          },
-          {
-            "internalType": "uint256",
-            "name": "hanChot",
-            "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "daHoanThanh",
-            "type": "bool"
-          },
-          {
-            "internalType": "uint256",
-            "name": "tienThuong",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "nguoiDuocGan",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "thoiGianTao",
-            "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "daNhanThuong",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct TaskManager.CongViec[]",
-        "name": "",
-        "type": "tuple[]"
+        "internalType": "bool",
+        "name": "rd",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -343,7 +196,7 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_id",
+        "name": "id",
         "type": "uint256"
       }
     ],
@@ -356,17 +209,17 @@
     "inputs": [
       {
         "internalType": "string",
-        "name": "_tieuDe",
+        "name": "t",
         "type": "string"
       },
       {
         "internalType": "string",
-        "name": "_moTa",
+        "name": "m",
         "type": "string"
       },
       {
         "internalType": "uint256",
-        "name": "_hanChot",
+        "name": "h",
         "type": "uint256"
       }
     ],
@@ -379,22 +232,22 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_id",
+        "name": "id",
         "type": "uint256"
       },
       {
         "internalType": "string",
-        "name": "_tieuDe",
+        "name": "t",
         "type": "string"
       },
       {
         "internalType": "string",
-        "name": "_moTa",
+        "name": "m",
         "type": "string"
       },
       {
         "internalType": "uint256",
-        "name": "_hanChot",
+        "name": "h",
         "type": "uint256"
       }
     ],
@@ -407,7 +260,7 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_id",
+        "name": "id",
         "type": "uint256"
       }
     ],
@@ -420,7 +273,7 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_id",
+        "name": "id",
         "type": "uint256"
       }
     ],
@@ -428,180 +281,5 @@
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "id",
-        "type": "uint256"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "nguoiGan",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "nguoiNhan",
-        "type": "address"
-      }
-    ],
-    "name": "CongViecDuocGan",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "id",
-        "type": "uint256"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
-      }
-    ],
-    "name": "CongViecDuocXoa",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "id",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "string",
-        "name": "tieuDe",
-        "type": "string"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "hanChot",
-        "type": "uint256"
-      }
-    ],
-    "name": "CongViecDuocSua",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "id",
-        "type": "uint256"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "string",
-        "name": "tieuDe",
-        "type": "string"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "hanChot",
-        "type": "uint256"
-      }
-    ],
-    "name": "CongViecDuocTao",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "id",
-        "type": "uint256"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "nguoiHoanThanh",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "bool",
-        "name": "trangThai",
-        "type": "bool"
-      }
-    ],
-    "name": "CongViecHoanThanh",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "id",
-        "type": "uint256"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "nguoiThem",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "soTien",
-        "type": "uint256"
-      }
-    ],
-    "name": "ThuongDuocThem",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "id",
-        "type": "uint256"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "nguoiNhan",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "soTien",
-        "type": "uint256"
-      }
-    ],
-    "name": "ThuongDuocNhan",
-    "type": "event"
   }
 ]
