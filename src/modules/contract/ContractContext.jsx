@@ -1,21 +1,17 @@
 /**
  * @file ContractContext.jsx
- * @description Context quản lý Smart Contract instance
+ * @description Context quản lý Smart Contract instance - Super Optimized Version
  */
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { ethers } from 'ethers';
 import { useWalletContext } from '../wallet/WalletContext';
 import { CONTRACT_ADDRESS } from '../common/utils/constants';
 import TaskManagerABI from './abi/TaskManager.json';
 import toast from 'react-hot-toast';
 
-// Tạo Context
 const ContractContext = createContext();
 
-/**
- * Hook để sử dụng ContractContext
- */
 export const useContractContext = () => {
   const context = useContext(ContractContext);
   if (!context) {
@@ -24,261 +20,291 @@ export const useContractContext = () => {
   return context;
 };
 
-/**
- * ContractProvider Component
- */
 export const ContractProvider = ({ children }) => {
-  
   const { signer, diaChiVi } = useWalletContext();
   const [contract, setContract] = useState(null);
   const [contractReadOnly, setContractReadOnly] = useState(null);
-  
-  /**
-   * Khởi tạo contract instance
-   */
+
   useEffect(() => {
     const initContract = async () => {
+      if (!CONTRACT_ADDRESS) {
+        console.warn('Contract chưa được khởi tạo');
+        return;
+      }
       try {
-        // Kiểm tra địa chỉ contract
-        if (!CONTRACT_ADDRESS || CONTRACT_ADDRESS === '') {
-          console.warn('Chưa cấu hình địa chỉ contract trong .env');
-          return;
-        }
-        
-        // Contract với signer (có thể ghi)
         if (signer) {
-          const contractInstance = new ethers.Contract(
-            CONTRACT_ADDRESS,
-            TaskManagerABI,
-            signer
-          );
-          setContract(contractInstance);
+          setContract(new ethers.Contract(CONTRACT_ADDRESS, TaskManagerABI, signer));
         }
-        
-        // Contract read-only (chỉ đọc, không cần wallet)
         if (window.ethereum) {
           const provider = new ethers.BrowserProvider(window.ethereum);
-          const readOnlyContract = new ethers.Contract(
-            CONTRACT_ADDRESS,
-            TaskManagerABI,
-            provider
-          );
-          setContractReadOnly(readOnlyContract);
+          setContractReadOnly(new ethers.Contract(CONTRACT_ADDRESS, TaskManagerABI, provider));
         }
-        
       } catch (error) {
-        console.error('Lỗi khi khởi tạo contract:', error);
+        console.error('Lỗi khởi tạo contract:', error);
       }
     };
-    
     initContract();
   }, [signer]);
-  
-  /**
-   * Tạo công việc mới
-   */
+
+  // WRAPPER FUNCTIONS
   const taoCongViec = async (tieuDe, moTa, hanChot) => {
     if (!contract) {
       toast.error('Vui lòng kết nối ví trước!');
       return null;
     }
-    
     try {
       toast.loading('Đang tạo công việc...', { id: 'create-task' });
-      
       const tx = await contract.taoCongViec(tieuDe, moTa, hanChot);
-      
       toast.loading('Đang đợi xác nhận...', { id: 'create-task' });
       const receipt = await tx.wait();
-      
       toast.success('Tạo công việc thành công!', { id: 'create-task' });
-      
       return receipt;
     } catch (error) {
       console.error('Lỗi khi tạo công việc:', error);
-      
       if (error.code === 4001) {
         toast.error('Bạn đã từ chối giao dịch', { id: 'create-task' });
       } else {
         toast.error('Lỗi khi tạo công việc', { id: 'create-task' });
       }
-      
       return null;
     }
   };
-  
-  /**
-   * Sửa công việc
-   */
+
   const suaCongViec = async (id, tieuDe, moTa, hanChot) => {
     if (!contract) {
       toast.error('Vui lòng kết nối ví trước!');
       return null;
     }
-    
     try {
       toast.loading('Đang cập nhật...', { id: 'update-task' });
-      
       const tx = await contract.suaCongViec(id, tieuDe, moTa, hanChot);
-      
-      toast.loading('Đang đợi xác nhận...', { id: 'update-task' });
-      const receipt = await tx.wait();
-      
+      await tx.wait();
       toast.success('Cập nhật thành công!', { id: 'update-task' });
-      
-      return receipt;
     } catch (error) {
-      console.error('Lỗi khi sửa công việc:', error);
-      
-      if (error.code === 4001) {
-        toast.error('Bạn đã từ chối giao dịch', { id: 'update-task' });
-      } else {
-        toast.error('Lỗi khi cập nhật', { id: 'update-task' });
-      }
-      
-      return null;
+      console.error('Lỗi khi sửa:', error);
+      toast.error('Lỗi khi cập nhật', { id: 'update-task' });
     }
   };
-  
-  /**
-   * Xóa công việc
-   */
+
   const xoaCongViec = async (id) => {
-    if (!contract) {
-      toast.error('Vui lòng kết nối ví trước!');
-      return null;
-    }
-    
+    if (!contract) return;
     try {
       toast.loading('Đang xóa...', { id: 'delete-task' });
-      
       const tx = await contract.xoaCongViec(id);
-      
-      toast.loading('Đang đợi xác nhận...', { id: 'delete-task' });
-      const receipt = await tx.wait();
-      
-      toast.success('Xóa thành công!', { id: 'delete-task' });
-      
-      return receipt;
+      await tx.wait();
+      toast.success('Đã xóa!', { id: 'delete-task' });
     } catch (error) {
-      console.error('Lỗi khi xóa công việc:', error);
-      
-      if (error.code === 4001) {
-        toast.error('Bạn đã từ chối giao dịch', { id: 'delete-task' });
-      } else {
-        toast.error('Lỗi khi xóa', { id: 'delete-task' });
-      }
-      
-      return null;
+      console.error('Lỗi khi xóa:', error);
+      toast.error('Lỗi khi xóa', { id: 'delete-task' });
     }
   };
-  
-  /**
-   * Đánh dấu hoàn thành
-   */
-  const danhDauHoanThanh = async (id, trangThai) => {
-    if (!contract) {
-      toast.error('Vui lòng kết nối ví trước!');
-      return null;
-    }
-    
+
+  const danhDauHoanThanh = async (id, status) => {
+    if (!contract) return;
     try {
       toast.loading('Đang cập nhật...', { id: 'toggle-task' });
-      
-      const tx = await contract.danhDauHoanThanh(id, trangThai);
-      
-      toast.loading('Đang đợi xác nhận...', { id: 'toggle-task' });
-      const receipt = await tx.wait();
-      
-      toast.success(trangThai ? 'Đã hoàn thành!' : 'Đã đánh dấu chưa hoàn thành', { id: 'toggle-task' });
-      
-      return receipt;
+      const tx = await contract.danhDauHoanThanh(id, status);
+      await tx.wait();
+      toast.success(status ? 'Đã hoàn thành!' : 'Đã cập nhật', { id: 'toggle-task' });
     } catch (error) {
       console.error('Lỗi khi đánh dấu:', error);
-      
-      if (error.code === 4001) {
-        toast.error('Bạn đã từ chối giao dịch', { id: 'toggle-task' });
-      } else {
-        toast.error('Lỗi khi cập nhật', { id: 'toggle-task' });
-      }
-      
-      return null;
+      toast.error('Lỗi', { id: 'toggle-task' });
     }
   };
-  
+
+  const ganCongViec = async (id, to) => {
+    if (!contract) return;
+    try {
+      toast.loading('Đang gán...', { id: 'assign-task' });
+      const tx = await contract.ganCongViec(id, to);
+      await tx.wait();
+      toast.success('Đã gán!', { id: 'assign-task' });
+    } catch (error) {
+      console.error('Lỗi khi gán:', error);
+      toast.error('Lỗi', { id: 'assign-task' });
+    }
+  };
+
+  const themThuong = async (id, value) => {
+    if (!contract) return;
+    try {
+      toast.loading('Đang thêm thưởng...', { id: 'add-reward' });
+      const tx = await contract.themThuong(id, { value });
+      await tx.wait();
+      toast.success('Đã thêm thưởng!', { id: 'add-reward' });
+    } catch (error) {
+      console.error('Lỗi khi thêm thưởng:', error);
+      toast.error('Lỗi', { id: 'add-reward' });
+    }
+  };
+
+  const nhanThuong = async (id) => {
+    if (!contract) return;
+    try {
+      toast.loading('Đang nhận thưởng...', { id: 'claim-reward' });
+      const tx = await contract.nhanThuong(id);
+      await tx.wait();
+      toast.success('Đã nhận thưởng!', { id: 'claim-reward' });
+    } catch (error) {
+      console.error('Lỗi khi nhận thưởng:', error);
+      toast.error('Lỗi', { id: 'claim-reward' });
+    }
+  };
+
   /**
-   * Lấy tất cả công việc
+   * Lấy tất cả công việc từ Events
    */
-  const layTatCaCongViec = async () => {
-    const contractToUse = contract || contractReadOnly;
-    
-    if (!contractToUse) {
+  const layTatCaCongViec = useCallback(async () => {
+    const c = contract || contractReadOnly;
+    if (!c) {
       console.warn('Contract chưa được khởi tạo');
       return [];
     }
-    
+
     try {
-      const tasks = await contractToUse.layTatCaCongViec();
-      return tasks;
+      const currentAddr = await c.getAddress();
+      const provider = c.runner.provider || c.provider;
+      const network = await provider.getNetwork();
+
+      console.log('=== DEBUG INFO ===');
+      console.log('Contract Address:', currentAddr);
+      console.log('Chain ID:', network.chainId.toString());
+      console.log('Network Name:', network.name);
+
+      // Kiểm tra xem có đúng Sepolia không
+      if (network.chainId.toString() !== '11155111') {
+        console.error('⚠️ CẢNH BÁO: Bạn đang ở chain ID', network.chainId.toString(), 'thay vì Sepolia (11155111)');
+      }
+
+      console.log('Đang query events...');
+
+      // Thử query với nhiều cách khác nhau
+      let createdEvents = [];
+
+      // Cách 1: Query từ gần đây nhất
+      try {
+        console.log('Thử query 10000 block gần nhất...');
+        createdEvents = await c.queryFilter(c.filters.TaskCreated(), -10000);
+        console.log(`→ Tìm thấy ${createdEvents.length} events`);
+      } catch (e1) {
+        console.warn('Lỗi query -10000:', e1.message);
+
+        // Cách 2: Query không giới hạn
+        try {
+          console.log('Thử query tất cả blocks...');
+          createdEvents = await c.queryFilter(c.filters.TaskCreated());
+          console.log(`→ Tìm thấy ${createdEvents.length} events`);
+        } catch (e2) {
+          console.error('Lỗi query tất cả:', e2.message);
+
+          // Cách 3: Đợi 3 giây rồi thử lại (RPC có thể bị lag)
+          console.log('Đợi 3 giây rồi thử lại...');
+          await new Promise(resolve => setTimeout(resolve, 3000));
+          createdEvents = await c.queryFilter(c.filters.TaskCreated());
+          console.log(`→ Tìm thấy ${createdEvents.length} events sau khi đợi`);
+        }
+      }
+
+      if (createdEvents.length === 0) {
+        console.warn('⚠️ Không tìm thấy sự kiện nào. Có thể:');
+        console.warn('  1. RPC đang lag - hãy đợi vài phút rồi refresh');
+        console.warn('  2. Contract address sai');
+        console.warn('  3. Đang ở sai network');
+        return [];
+      }
+
+      // Lấy events khác
+      const deletedEvents = await c.queryFilter(c.filters.TaskDeleted(), -10000);
+      const deletedIds = new Set(deletedEvents.map(e => e.args.id.toString()));
+
+      const updatedEvents = await c.queryFilter(c.filters.TaskUpdated(), -10000);
+      const latestUpdates = {};
+      updatedEvents.forEach(e => {
+        const id = e.args.id.toString();
+        if (!latestUpdates[id] || e.blockNumber > latestUpdates[id].blockNumber) {
+          latestUpdates[id] = e;
+        }
+      });
+
+      // Build tasks
+      const tasks = await Promise.all(
+        createdEvents
+          .filter(e => !deletedIds.has(e.args.id.toString()))
+          .map(async (e) => {
+            const id = e.args.id;
+            const idStr = id.toString();
+
+            try {
+              // TaskDApp mới chỉ dùng 1 hàm getTaskInfo trả về 6 giá trị
+              // returns (address o, address a, uint256 d, uint256 r, bool c, bool rd)
+              const res = await c.getTaskInfo(id);
+              const update = latestUpdates[idStr];
+
+              return {
+                id: id,
+                owner: (res[0] || e.args.owner || '').toString(),
+                tieuDe: update ? update.args.title : e.args.title,
+                moTa: update ? update.args.desc : e.args.desc,
+                hanChot: update ? update.args.deadline : e.args.deadline,
+                daHoanThanh: res[4] !== undefined ? res[4] : false,
+                tienThuong: res[3] || 0n,
+                nguoiDuocGan: (res[1] || '0x0000000000000000000000000000000000000000').toString(),
+                thoiGianTao: 0n, // Bản minimal không lưu createdAt để tiết kiệm gas
+                daNhanThuong: res[5] || false
+              };
+            } catch (err) {
+              console.error(`Lỗi parse task ${idStr}:`, err);
+              return null;
+            }
+          })
+      );
+
+      const filteredTasks = tasks.filter(t => t !== null);
+      console.log(`✅ Tìm thấy ${filteredTasks.length} task hợp lệ`);
+      return filteredTasks;
     } catch (error) {
-      console.error('Lỗi khi lấy danh sách:', error);
+      console.error('❌ Lỗi nghiêm trọng:', error);
       return [];
     }
-  };
-  
+  }, [contract, contractReadOnly]);
+
   /**
-   * Lấy công việc của tôi
+   * Lấy công việc của một địa chỉ cụ thể
    */
-  const layCongViecCuaToi = async (address) => {
-    const contractToUse = contract || contractReadOnly;
-    
-    if (!contractToUse) {
-      return [];
-    }
-    
-    try {
-      const tasks = await contractToUse.layCongViecCuaToi(address || diaChiVi);
-      return tasks;
-    } catch (error) {
-      console.error('Lỗi khi lấy công việc của tôi:', error);
-      return [];
-    }
-  };
-  
+  const layCongViecCuaToi = useCallback(async (address) => {
+    if (!address) return [];
+    const allTasks = await layTatCaCongViec();
+
+    return allTasks.filter(task => {
+      const owner = (task.owner || '').toLowerCase();
+      const search = address.toLowerCase();
+      return owner === search;
+    });
+  }, [layTatCaCongViec]);
+
   /**
-   * Lấy chi tiết công việc
+   * Lấy chi tiết một công việc
    */
-  const layChiTietCongViec = async (id) => {
-    const contractToUse = contract || contractReadOnly;
-    
-    if (!contractToUse) {
-      return null;
-    }
-    
-    try {
-      const task = await contractToUse.layChiTietCongViec(id);
-      return task;
-    } catch (error) {
-      console.error('Lỗi khi lấy chi tiết:', error);
-      return null;
-    }
-  };
-  
-  // Context value
-  const value = {
-    contract,
-    contractReadOnly,
-    taoCongViec,
-    suaCongViec,
-    xoaCongViec,
-    danhDauHoanThanh,
-    layTatCaCongViec,
-    layCongViecCuaToi,
-    layChiTietCongViec
-  };
-  
+  const layChiTietCongViec = useCallback(async (id) => {
+    const allTasks = await layTatCaCongViec();
+    return allTasks.find(task => task.id.toString() === id.toString()) || null;
+  }, [layTatCaCongViec]);
+
   return (
-    <ContractContext.Provider value={value}>
+    <ContractContext.Provider value={{
+      contract,
+      contractReadOnly,
+      taoCongViec,
+      suaCongViec,
+      xoaCongViec,
+      danhDauHoanThanh,
+      ganCongViec,
+      themThuong,
+      nhanThuong,
+      layTatCaCongViec,
+      layCongViecCuaToi,
+      layChiTietCongViec
+    }}>
       {children}
     </ContractContext.Provider>
   );
