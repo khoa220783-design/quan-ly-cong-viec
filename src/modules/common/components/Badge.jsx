@@ -1,6 +1,6 @@
 /**
  * @file Badge.jsx
- * @description Premium Badge Component với glow effects
+ * @description Badge component với light/dark support
  */
 
 import React from 'react';
@@ -14,23 +14,20 @@ const Badge = ({
   pulse = false,
 }) => {
 
-  // Size classes
   const sizeClasses = {
     xs: 'px-1.5 py-0.5 text-[10px]',
-    sm: 'px-2 py-1 text-xs',
+    sm: 'px-2 py-0.5 text-xs',
     md: 'px-2.5 py-1 text-sm',
     lg: 'px-3 py-1.5 text-sm',
   };
 
-  // Variant classes
   const variantClasses = {
-    default: 'bg-dark-700/50 text-dark-300 border-dark-600',
-    success: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-    warning: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
-    danger: 'bg-red-500/10 text-red-400 border-red-500/20',
-    info: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20',
-    brand: 'bg-brand-500/10 text-brand-400 border-brand-500/20',
-    gradient: 'bg-gradient-to-r from-brand-500/10 to-cyan-500/10 text-white border-brand-500/20',
+    default: 'bg-zinc-100 dark:bg-zinc-700/50 text-zinc-600 dark:text-zinc-300',
+    success: 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
+    warning: 'bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400',
+    danger: 'bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400',
+    info: 'bg-cyan-50 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400',
+    brand: 'bg-violet-50 dark:bg-violet-500/10 text-violet-600 dark:text-violet-400',
   };
 
   return (
@@ -38,34 +35,28 @@ const Badge = ({
       className={`
         inline-flex items-center gap-1
         rounded-full font-medium
-        border
         ${sizeClasses[size]}
         ${variantClasses[variant]}
         ${className}
       `}
     >
-      {/* Pulse indicator */}
       {pulse && (
         <span className="relative flex h-2 w-2">
           <span className={`
             animate-ping absolute inline-flex h-full w-full rounded-full opacity-75
             ${variant === 'success' ? 'bg-emerald-400' :
               variant === 'danger' ? 'bg-red-400' :
-                variant === 'warning' ? 'bg-amber-400' : 'bg-brand-400'}
+                variant === 'warning' ? 'bg-amber-400' : 'bg-violet-400'}
           `} />
           <span className={`
             relative inline-flex rounded-full h-2 w-2
-            ${variant === 'success' ? 'bg-emerald-400' :
-              variant === 'danger' ? 'bg-red-400' :
-                variant === 'warning' ? 'bg-amber-400' : 'bg-brand-400'}
+            ${variant === 'success' ? 'bg-emerald-500' :
+              variant === 'danger' ? 'bg-red-500' :
+                variant === 'warning' ? 'bg-amber-500' : 'bg-violet-500'}
           `} />
         </span>
       )}
-
-      {/* Icon */}
       {icon && <span className="flex-shrink-0">{icon}</span>}
-
-      {/* Content */}
       {children}
     </span>
   );

@@ -1,6 +1,6 @@
 /**
  * @file TaskList.jsx
- * @description Premium Task List với Stats Dashboard và Multiple Views
+ * @description Premium Task List với light/dark support
  */
 
 import React, { useState, useMemo } from 'react';
@@ -11,7 +11,7 @@ import { TRANG_THAI } from '../../common/utils/constants';
 import TaskCard from './TaskCard';
 import TaskForm from './TaskForm';
 import Button from '../../common/components/Button';
-import Loading, { TaskCardSkeleton } from '../../common/components/Loading';
+import { TaskCardSkeleton } from '../../common/components/Loading';
 
 const TaskList = () => {
 
@@ -21,7 +21,7 @@ const TaskList = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [taskToEdit, setTaskToEdit] = useState(null);
   const [searchInput, setSearchInput] = useState('');
-  const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'list'
+  const [viewMode, setViewMode] = useState('grid');
 
   // Calculate stats
   const stats = useMemo(() => {
@@ -37,7 +37,6 @@ const TaskList = () => {
     return { total, completed, overdue, totalReward };
   }, [danhSachCongViec]);
 
-  // Handlers
   const handleCreate = () => {
     setTaskToEdit(null);
     setIsFormOpen(true);
@@ -53,33 +52,25 @@ const TaskList = () => {
     setTaskToEdit(null);
   };
 
-  const handleFilterChange = (trangThai) => {
-    capNhatBoLoc({ trangThai });
-  };
-
-  const handleSortChange = (e) => {
-    capNhatBoLoc({ sapXep: e.target.value });
-  };
-
   const handleSearch = (e) => {
     e.preventDefault();
     capNhatBoLoc({ tuKhoa: searchInput });
   };
 
-  // Stats Card Component
+  // Stat Card Component
   const StatCard = ({ icon: Icon, label, value, color, subValue }) => (
-    <div className="glass rounded-xl p-4 border border-white/5 hover:border-white/10 transition-colors">
+    <div className="bg-white dark:bg-zinc-800/50 rounded-xl p-4 border border-zinc-200 dark:border-zinc-700/50 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors">
       <div className="flex items-center gap-3">
         <div className={`w-10 h-10 rounded-lg ${color} flex items-center justify-center`}>
           <Icon className="w-5 h-5 text-white" />
         </div>
         <div>
-          <p className="text-2xl font-bold text-white">{value}</p>
-          <p className="text-xs text-dark-400">{label}</p>
+          <p className="text-2xl font-bold text-zinc-800 dark:text-white">{value}</p>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400">{label}</p>
         </div>
       </div>
       {subValue && (
-        <p className="text-xs text-dark-500 mt-2">{subValue}</p>
+        <p className="text-xs text-zinc-500 dark:text-zinc-500 mt-2">{subValue}</p>
       )}
     </div>
   );
@@ -89,11 +80,11 @@ const TaskList = () => {
       {/* Header */}
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-white">
-            Danh sách công việc
+          <h2 className="text-2xl font-bold text-zinc-800 dark:text-white">
+            Công việc của bạn
           </h2>
-          <p className="text-dark-400 mt-1">
-            Quản lý và theo dõi tiến độ công việc của bạn
+          <p className="text-zinc-500 dark:text-zinc-400 mt-1">
+            Quản lý và theo dõi tiến độ trên blockchain
           </p>
         </div>
 
@@ -103,7 +94,7 @@ const TaskList = () => {
             variant="gradient"
             icon={<FaPlus className="w-4 h-4" />}
           >
-            Tạo công việc mới
+            Tạo mới
           </Button>
         )}
       </div>
@@ -115,48 +106,50 @@ const TaskList = () => {
             icon={FaList}
             label="Tổng công việc"
             value={stats.total}
-            color="bg-gradient-to-br from-brand-500 to-brand-600"
+            color="bg-violet-500"
           />
           <StatCard
             icon={FaCheckCircle}
-            label="Đã hoàn thành"
+            label="Hoàn thành"
             value={stats.completed}
-            color="bg-gradient-to-br from-emerald-500 to-emerald-600"
-            subValue={stats.total > 0 ? `${Math.round((stats.completed / stats.total) * 100)}% hoàn thành` : null}
+            color="bg-emerald-500"
+            subValue={stats.total > 0 ? `${Math.round((stats.completed / stats.total) * 100)}%` : null}
           />
           <StatCard
             icon={FaExclamationTriangle}
             label="Quá hạn"
             value={stats.overdue}
-            color={stats.overdue > 0 ? "bg-gradient-to-br from-red-500 to-red-600" : "bg-dark-700"}
+            color={stats.overdue > 0 ? "bg-red-500" : "bg-zinc-400"}
           />
           <StatCard
             icon={FaCoins}
             label="Tổng thưởng"
-            value={`${stats.totalReward.toFixed(4)}`}
-            color="bg-gradient-to-br from-amber-500 to-amber-600"
+            value={stats.totalReward.toFixed(3)}
+            color="bg-amber-500"
             subValue="ETH"
           />
         </div>
       )}
 
-      {/* Filters & Search */}
-      <div className="glass rounded-xl p-4 border border-white/5">
+      {/* Filters */}
+      <div className="bg-white dark:bg-zinc-800/50 rounded-xl p-4 border border-zinc-200 dark:border-zinc-700/50">
         <div className="flex flex-col lg:flex-row gap-4">
           {/* Search */}
           <form onSubmit={handleSearch} className="flex-1">
             <div className="relative">
-              <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-500" />
+              <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
               <input
                 type="text"
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
-                placeholder="Tìm kiếm công việc..."
+                placeholder="Tìm kiếm..."
                 className="
                   w-full pl-10 pr-4 py-2.5
-                  bg-dark-800/50 border border-white/10 rounded-xl
-                  text-white placeholder:text-dark-500
-                  focus:outline-none focus:border-brand-500/50 focus:ring-2 focus:ring-brand-500/20
+                  bg-zinc-50 dark:bg-zinc-700/50 
+                  border border-zinc-200 dark:border-zinc-600 rounded-xl
+                  text-zinc-800 dark:text-white
+                  placeholder:text-zinc-400 dark:placeholder:text-zinc-500
+                  focus:outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20
                   transition-all
                 "
               />
@@ -166,26 +159,26 @@ const TaskList = () => {
           {/* Filter Buttons */}
           <div className="flex items-center gap-2">
             <button
-              onClick={() => handleFilterChange(TRANG_THAI.TAT_CA)}
+              onClick={() => capNhatBoLoc({ trangThai: TRANG_THAI.TAT_CA })}
               className={`
                 px-4 py-2.5 rounded-xl text-sm font-medium transition-all
                 ${boLoc.trangThai === TRANG_THAI.TAT_CA
-                  ? 'bg-brand-500/20 text-brand-400 border border-brand-500/30'
-                  : 'bg-dark-800/50 text-dark-300 border border-white/5 hover:bg-dark-700/50 hover:text-white'
+                  ? 'bg-violet-100 dark:bg-violet-500/20 text-violet-600 dark:text-violet-400'
+                  : 'bg-zinc-100 dark:bg-zinc-700/50 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700'
                 }
               `}
             >
               Tất cả
             </button>
             <button
-              onClick={() => handleFilterChange(TRANG_THAI.CUA_TOI)}
+              onClick={() => capNhatBoLoc({ trangThai: TRANG_THAI.CUA_TOI })}
               disabled={!diaChiVi}
               className={`
                 px-4 py-2.5 rounded-xl text-sm font-medium transition-all
                 disabled:opacity-50 disabled:cursor-not-allowed
                 ${boLoc.trangThai === TRANG_THAI.CUA_TOI
-                  ? 'bg-brand-500/20 text-brand-400 border border-brand-500/30'
-                  : 'bg-dark-800/50 text-dark-300 border border-white/5 hover:bg-dark-700/50 hover:text-white'
+                  ? 'bg-violet-100 dark:bg-violet-500/20 text-violet-600 dark:text-violet-400'
+                  : 'bg-zinc-100 dark:bg-zinc-700/50 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700'
                 }
               `}
             >
@@ -196,12 +189,13 @@ const TaskList = () => {
           {/* Sort */}
           <select
             value={boLoc.sapXep}
-            onChange={handleSortChange}
+            onChange={(e) => capNhatBoLoc({ sapXep: e.target.value })}
             className="
               px-4 py-2.5
-              bg-dark-800/50 border border-white/10 rounded-xl
-              text-dark-200 text-sm
-              focus:outline-none focus:border-brand-500/50
+              bg-zinc-50 dark:bg-zinc-700/50 
+              border border-zinc-200 dark:border-zinc-600 rounded-xl
+              text-zinc-700 dark:text-zinc-200 text-sm
+              focus:outline-none focus:border-violet-500
               cursor-pointer
             "
           >
@@ -211,17 +205,16 @@ const TaskList = () => {
           </select>
 
           {/* View Toggle */}
-          <div className="flex items-center gap-1 bg-dark-800/50 rounded-xl p-1 border border-white/5">
+          <div className="flex items-center gap-1 bg-zinc-100 dark:bg-zinc-700/50 rounded-xl p-1">
             <button
               onClick={() => setViewMode('grid')}
               className={`
                 p-2 rounded-lg transition-all
                 ${viewMode === 'grid'
-                  ? 'bg-brand-500/20 text-brand-400'
-                  : 'text-dark-400 hover:text-white'
+                  ? 'bg-white dark:bg-zinc-600 text-violet-500 shadow-sm'
+                  : 'text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200'
                 }
               `}
-              title="Grid view"
             >
               <FaTh className="w-4 h-4" />
             </button>
@@ -230,11 +223,10 @@ const TaskList = () => {
               className={`
                 p-2 rounded-lg transition-all
                 ${viewMode === 'list'
-                  ? 'bg-brand-500/20 text-brand-400'
-                  : 'text-dark-400 hover:text-white'
+                  ? 'bg-white dark:bg-zinc-600 text-violet-500 shadow-sm'
+                  : 'text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200'
                 }
               `}
-              title="List view"
             >
               <FaList className="w-4 h-4" />
             </button>
@@ -250,54 +242,37 @@ const TaskList = () => {
           ))}
         </div>
       ) : danhSachCongViec.length === 0 ? (
-        <div className="glass rounded-xl border border-white/5 p-12 text-center">
-          {/* Empty State */}
-          <div className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-brand-500/20 to-accent-cyan/20 flex items-center justify-center">
-            <svg className="w-10 h-10 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="bg-white dark:bg-zinc-800/50 rounded-2xl border border-zinc-200 dark:border-zinc-700/50 p-12 text-center">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-violet-100 dark:bg-violet-500/10 flex items-center justify-center">
+            <svg className="w-8 h-8 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
             </svg>
           </div>
-          <h3 className="text-lg font-semibold text-white mb-2">
-            {diaChiVi
-              ? 'Chưa có công việc nào'
-              : 'Kết nối ví để bắt đầu'
-            }
+          <h3 className="text-lg font-semibold text-zinc-800 dark:text-white mb-2">
+            {diaChiVi ? 'Chưa có công việc nào' : 'Kết nối ví để bắt đầu'}
           </h3>
-          <p className="text-dark-400 mb-6 max-w-md mx-auto">
+          <p className="text-zinc-500 dark:text-zinc-400 mb-6 max-w-md mx-auto">
             {diaChiVi
-              ? 'Tạo công việc đầu tiên của bạn để bắt đầu quản lý trên blockchain!'
-              : 'Kết nối ví MetaMask của bạn để xem và quản lý công việc'
+              ? 'Tạo công việc đầu tiên để bắt đầu quản lý trên blockchain!'
+              : 'Kết nối ví MetaMask để xem và quản lý công việc'
             }
           </p>
           {diaChiVi && (
-            <Button
-              onClick={handleCreate}
-              variant="gradient"
-              icon={<FaPlus className="w-4 h-4" />}
-            >
-              Tạo công việc mới
+            <Button onClick={handleCreate} variant="gradient" icon={<FaPlus className="w-4 h-4" />}>
+              Tạo mới
             </Button>
           )}
         </div>
       ) : (
         <div className={`grid gap-4 ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
           {danhSachCongViec.map((task, index) => (
-            <TaskCard
-              key={task.id}
-              task={task}
-              onEdit={handleEdit}
-              index={index}
-            />
+            <TaskCard key={task.id} task={task} onEdit={handleEdit} index={index} />
           ))}
         </div>
       )}
 
       {/* Form Modal */}
-      <TaskForm
-        isOpen={isFormOpen}
-        onClose={handleCloseForm}
-        taskToEdit={taskToEdit}
-      />
+      <TaskForm isOpen={isFormOpen} onClose={handleCloseForm} taskToEdit={taskToEdit} />
     </div>
   );
 };

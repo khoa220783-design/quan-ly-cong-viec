@@ -1,6 +1,6 @@
 /**
  * @file WalletButton.jsx
- * @description Premium Wallet Button với dropdown và animations
+ * @description Wallet Button với light/dark support
  */
 
 import React, { useState, useRef, useEffect } from 'react';
@@ -15,7 +15,6 @@ const WalletButton = () => {
   const [copied, setCopied] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -27,7 +26,6 @@ const WalletButton = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Copy address to clipboard
   const copyAddress = async () => {
     try {
       await navigator.clipboard.writeText(diaChiVi);
@@ -38,18 +36,17 @@ const WalletButton = () => {
     }
   };
 
-  // Open Etherscan
   const openEtherscan = () => {
     window.open(`https://sepolia.etherscan.io/address/${diaChiVi}`, '_blank');
   };
 
-  // Not connected state
   if (!diaChiVi) {
     return (
       <Button
         onClick={ketNoiVi}
         loading={dangKetNoi}
-        variant="gradient"
+        variant="primary"
+        size="sm"
         icon={<FaWallet className="w-4 h-4" />}
       >
         {dangKetNoi ? 'Đang kết nối...' : 'Kết nối ví'}
@@ -57,43 +54,44 @@ const WalletButton = () => {
     );
   }
 
-  // Connected state with dropdown
   return (
     <div className="relative" ref={dropdownRef}>
-      {/* Main Button */}
       <button
         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
         className={`
-          flex items-center gap-3 px-4 py-2
-          glass rounded-xl
-          border border-white/10 hover:border-brand-500/30
+          flex items-center gap-2 px-3 py-2
+          bg-white dark:bg-zinc-800
+          border rounded-xl
           transition-all duration-200
-          ${isDropdownOpen ? 'border-brand-500/50' : ''}
+          ${isDropdownOpen
+            ? 'border-violet-300 dark:border-violet-500/50'
+            : 'border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600'
+          }
         `}
       >
         {/* Balance */}
-        <div className="hidden sm:flex items-center gap-2 pr-3 border-r border-white/10">
-          <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="text-sm font-medium text-white">
-            {formatSoDu(soDu)}
-          </span>
-        </div>
+        <span className="hidden sm:block text-sm font-medium text-zinc-700 dark:text-zinc-200">
+          {formatSoDu(soDu)}
+        </span>
 
-        {/* Address */}
+        {/* Divider */}
+        <div className="hidden sm:block w-px h-4 bg-zinc-200 dark:bg-zinc-700" />
+
+        {/* Avatar & Address */}
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-full bg-gradient-to-br from-brand-500 to-accent-cyan flex items-center justify-center">
+          <div className="w-6 h-6 rounded-full bg-gradient-to-br from-violet-400 to-violet-600 flex items-center justify-center">
             <span className="text-[10px] font-bold text-white">
               {diaChiVi.slice(2, 4).toUpperCase()}
             </span>
           </div>
-          <span className="text-sm font-medium text-dark-200">
+          <span className="text-sm font-medium text-zinc-600 dark:text-zinc-300">
             {formatDiaChi(diaChiVi)}
           </span>
         </div>
 
         {/* Chevron */}
         <svg
-          className={`w-4 h-4 text-dark-400 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`}
+          className={`w-4 h-4 text-zinc-400 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -102,41 +100,41 @@ const WalletButton = () => {
         </svg>
       </button>
 
-      {/* Dropdown Menu */}
+      {/* Dropdown */}
       {isDropdownOpen && (
         <div className="
-          absolute right-0 mt-2 w-72
-          glass rounded-xl
-          border border-white/10
-          shadow-2xl shadow-black/50
+          absolute right-0 mt-2 w-64
+          bg-white dark:bg-zinc-800
+          rounded-xl shadow-lg
+          border border-zinc-200 dark:border-zinc-700
           animate-slide-down
           overflow-hidden
           z-50
         ">
           {/* Header */}
-          <div className="p-4 border-b border-white/5">
+          <div className="p-3 border-b border-zinc-100 dark:border-zinc-700">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-accent-cyan flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-400 to-violet-600 flex items-center justify-center">
                 <span className="text-sm font-bold text-white">
                   {diaChiVi.slice(2, 4).toUpperCase()}
                 </span>
               </div>
               <div>
-                <p className="text-sm font-medium text-white">
+                <p className="text-sm font-medium text-zinc-800 dark:text-white">
                   {formatDiaChi(diaChiVi)}
                 </p>
-                <p className="text-xs text-dark-400">
+                <p className="text-xs text-zinc-500 dark:text-zinc-400">
                   Sepolia Testnet
                 </p>
               </div>
             </div>
           </div>
 
-          {/* Balance Card */}
-          <div className="p-4 border-b border-white/5">
-            <div className="glass rounded-lg p-3 border border-white/5">
-              <p className="text-xs text-dark-400 mb-1">Số dư</p>
-              <p className="text-xl font-bold gradient-text">
+          {/* Balance */}
+          <div className="p-3 border-b border-zinc-100 dark:border-zinc-700">
+            <div className="bg-zinc-50 dark:bg-zinc-700/50 rounded-lg p-3">
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-1">Số dư</p>
+              <p className="text-lg font-bold text-zinc-800 dark:text-white">
                 {formatSoDu(soDu)}
               </p>
             </div>
@@ -146,34 +144,28 @@ const WalletButton = () => {
           <div className="p-2">
             <button
               onClick={copyAddress}
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-dark-300 hover:text-white hover:bg-white/5 transition-colors"
+              className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors"
             >
-              {copied ? (
-                <FaCheck className="w-4 h-4 text-emerald-400" />
-              ) : (
-                <FaCopy className="w-4 h-4" />
-              )}
-              <span className="text-sm">
-                {copied ? 'Đã sao chép!' : 'Sao chép địa chỉ'}
-              </span>
+              {copied ? <FaCheck className="w-4 h-4 text-emerald-500" /> : <FaCopy className="w-4 h-4" />}
+              <span className="text-sm">{copied ? 'Đã sao chép!' : 'Sao chép địa chỉ'}</span>
             </button>
 
             <button
               onClick={openEtherscan}
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-dark-300 hover:text-white hover:bg-white/5 transition-colors"
+              className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors"
             >
               <FaExternalLinkAlt className="w-4 h-4" />
               <span className="text-sm">Xem trên Etherscan</span>
             </button>
 
-            <div className="h-px bg-white/5 my-2" />
+            <div className="h-px bg-zinc-100 dark:bg-zinc-700 my-1" />
 
             <button
               onClick={() => {
                 ngatKetNoiVi();
                 setIsDropdownOpen(false);
               }}
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors"
+              className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
             >
               <FaSignOutAlt className="w-4 h-4" />
               <span className="text-sm">Ngắt kết nối</span>
