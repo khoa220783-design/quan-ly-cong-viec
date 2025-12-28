@@ -104,7 +104,7 @@ function AppContent() {
               <div className="max-w-7xl mx-auto px-6">
                 <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
                   <div className="font-mono text-xs text-dim">
-                    <span className="text-neon-green">$</span> built on ethereum • contract deployed
+                    <span className="text-neon-green">$</span> xây dựng trên ethereum • contract đã triển khai
                   </div>
                   <div className="font-mono text-xs text-dim">
                     © 2025 taskmgr<span className="animate-blink">_</span>

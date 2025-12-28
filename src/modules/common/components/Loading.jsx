@@ -43,7 +43,7 @@ export const TaskCardSkeleton = () => (
   </div>
 );
 
-const Loading = ({ text = 'Loading...', fullScreen = false }) => {
+const Loading = ({ text = 'Đang tải...', fullScreen = false }) => {
   const content = (
     <div className="flex flex-col items-center gap-4">
       <div className="font-mono text-sm text-center">

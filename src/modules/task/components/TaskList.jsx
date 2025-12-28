@@ -46,9 +46,9 @@ const TaskList = () => {
   };
 
   const sortOptions = [
-    { value: 'moi-nhat', label: 'Newest' },
-    { value: 'cu-nhat', label: 'Oldest' },
-    { value: 'deadline', label: 'Deadline' },
+    { value: 'moi-nhat', label: 'Mới Nhất' },
+    { value: 'cu-nhat', label: 'Cũ Nhất' },
+    { value: 'deadline', label: 'Hạn Chót' },
   ];
 
   // Terminal stat card
@@ -75,13 +75,13 @@ const TaskList = () => {
           <div className="flex items-center gap-2 mb-2">
             <span className="font-mono text-neon-green text-sm">$</span>
             <span className="font-mono text-secondary text-sm">taskmgr</span>
-            <span className="font-mono text-dim text-sm">--list</span>
+            <span className="font-mono text-dim text-sm">--danh_sach</span>
           </div>
           <h2 className="font-display text-3xl font-bold text-primary tracking-tight">
-            Your Tasks<span className="text-neon-green animate-blink">_</span>
+            Danh Sách Công Việc<span className="text-neon-green animate-blink">_</span>
           </h2>
           <p className="font-mono text-sm text-secondary mt-1">
-            {stats.total} tasks • {stats.completed} completed
+            {stats.total} nhiệm vụ • {stats.completed} hoàn thành
           </p>
         </div>
 
@@ -92,20 +92,22 @@ const TaskList = () => {
             size="lg"
             icon={<FaPlus className="w-3.5 h-3.5" />}
           >
-            CREATE TASK
+            TẠO CÔNG VIỆC
           </Button>
         )}
       </div>
 
       {/* Stats Grid */}
-      {diaChiVi && (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard icon={FaTerminal} label="Total" value={stats.total} color="text-neon-cyan" />
-          <StatCard icon={FaCheckCircle} label="Done" value={stats.completed} color="text-neon-green" sub={stats.total > 0 ? `${Math.round((stats.completed / stats.total) * 100)}%` : null} />
-          <StatCard icon={FaExclamationTriangle} label="Overdue" value={stats.overdue} color={stats.overdue > 0 ? "text-neon-red" : "text-dim"} />
-          <StatCard icon={FaCoins} label="Rewards" value={stats.totalReward.toFixed(3)} color="text-neon-orange" sub="ETH" />
-        </div>
-      )}
+      {
+        diaChiVi && (
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <StatCard icon={FaTerminal} label="Tổng Số" value={stats.total} color="text-neon-cyan" />
+            <StatCard icon={FaCheckCircle} label="Hoàn Thành" value={stats.completed} color="text-neon-green" sub={stats.total > 0 ? `${Math.round((stats.completed / stats.total) * 100)}%` : null} />
+            <StatCard icon={FaExclamationTriangle} label="Quá Hạn" value={stats.overdue} color={stats.overdue > 0 ? "text-neon-red" : "text-dim"} />
+            <StatCard icon={FaCoins} label="Phần Thưởng" value={stats.totalReward.toFixed(3)} color="text-neon-orange" sub="ETH" />
+          </div>
+        )
+      }
 
       {/* Filters */}
       <div className="bg-surface-elevated border border-border rounded-xl p-4">
@@ -118,7 +120,7 @@ const TaskList = () => {
                 type="text"
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
-                placeholder="search..."
+                placeholder="tìm kiếm..."
                 className="w-full pl-8 pr-4 py-2.5 bg-surface border border-border rounded-lg font-mono text-sm text-primary placeholder:text-dim focus:outline-none focus:border-neon-green transition-colors"
               />
             </div>
@@ -133,7 +135,7 @@ const TaskList = () => {
                 : 'bg-surface-hover text-secondary border border-border hover:text-primary'
                 }`}
             >
-              ALL
+              TẤT CẢ
             </button>
             <button
               onClick={() => capNhatBoLoc({ trangThai: TRANG_THAI.CUA_TOI })}
@@ -143,7 +145,7 @@ const TaskList = () => {
                 : 'bg-surface-hover text-secondary border border-border hover:text-primary'
                 }`}
             >
-              MINE
+              CỦA TÔI
             </button>
           </div>
 
@@ -174,35 +176,37 @@ const TaskList = () => {
       </div>
 
       {/* Task Grid */}
-      {dangTai ? (
-        <div className={`grid gap-4 ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
-          {[...Array(6)].map((_, i) => <TaskCardSkeleton key={i} />)}
-        </div>
-      ) : danhSachCongViec.length === 0 ? (
-        <div className="bg-surface-elevated border border-border border-dashed rounded-xl p-12 text-center">
-          <div className="font-mono text-secondary mb-4">
-            <span className="text-neon-green">$</span> ls ./tasks<br />
-            <span className="text-dim">// no tasks found</span>
+      {
+        dangTai ? (
+          <div className={`grid gap-4 ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
+            {[...Array(6)].map((_, i) => <TaskCardSkeleton key={i} />)}
           </div>
-          <p className="font-display text-lg text-muted mb-4">
-            {diaChiVi ? 'Empty. Create your first task.' : 'Connect wallet to start.'}
-          </p>
-          {diaChiVi && (
-            <Button onClick={() => { setTaskToEdit(null); setIsFormOpen(true); }} variant="outline" icon={<FaPlus className="w-3 h-3" />}>
-              CREATE TASK
-            </Button>
-          )}
-        </div>
-      ) : (
-        <div className={`grid gap-4 ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
-          {danhSachCongViec.map((task, idx) => (
-            <TaskCard key={task.id} task={task} onEdit={(t) => { setTaskToEdit(t); setIsFormOpen(true); }} index={idx} />
-          ))}
-        </div>
-      )}
+        ) : danhSachCongViec.length === 0 ? (
+          <div className="bg-surface-elevated border border-border border-dashed rounded-xl p-12 text-center">
+            <div className="font-mono text-secondary mb-4">
+              <span className="text-neon-green">$</span> ls ./tasks<br />
+              <span className="text-dim">// không tìm thấy công việc nào</span>
+            </div>
+            <p className="font-display text-lg text-muted mb-4">
+              {diaChiVi ? 'Trống. Hãy tạo công việc đầu tiên.' : 'Kết nối ví để bắt đầu.'}
+            </p>
+            {diaChiVi && (
+              <Button onClick={() => { setTaskToEdit(null); setIsFormOpen(true); }} variant="outline" icon={<FaPlus className="w-3 h-3" />}>
+                TẠO CÔNG VIỆC
+              </Button>
+            )}
+          </div>
+        ) : (
+          <div className={`grid gap-4 ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
+            {danhSachCongViec.map((task, idx) => (
+              <TaskCard key={task.id} task={task} onEdit={(t) => { setTaskToEdit(t); setIsFormOpen(true); }} index={idx} />
+            ))}
+          </div>
+        )
+      }
 
       <TaskForm isOpen={isFormOpen} onClose={() => { setIsFormOpen(false); setTaskToEdit(null); }} taskToEdit={taskToEdit} />
-    </div>
+    </div >
   );
 };
 

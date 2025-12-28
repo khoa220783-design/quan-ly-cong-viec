@@ -10,11 +10,11 @@ const ConfirmDialog = ({
     isOpen,
     onClose,
     onConfirm,
-    title = 'confirm',
-    message = 'Are you sure?',
-    confirmText = 'CONFIRM',
-    cancelText = 'CANCEL',
-    variant = 'default',
+    title = 'xac_nhan',
+    message = 'Bạn có chắc chắn muốn thực hiện hành động này?',
+    confirmText = 'XÁC NHẬN',
+    cancelText = 'HỦY BỎ',
+    variant = 'warning',
     isLoading = false,
 }) => {
     const confirmRef = useRef(null);

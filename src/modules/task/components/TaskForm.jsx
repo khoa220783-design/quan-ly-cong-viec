@@ -73,12 +73,12 @@ const TaskForm = ({ isOpen, onClose, taskToEdit = null }) => {
   }), [errors]);
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={taskToEdit ? 'edit.task' : 'create.task'} size="md">
+    <Modal isOpen={isOpen} onClose={onClose} title={taskToEdit ? 'sua.cong_viec' : 'tao.cong_viec'} size="md">
       <form onSubmit={handleSubmit} className="space-y-5">
         {/* Title */}
         <div>
           <label className="block font-mono text-xs text-muted uppercase tracking-wider mb-2">
-            Title <span className="text-neon-red">*</span>
+            Tiêu đề <span className="text-neon-red">*</span>
           </label>
           <input
             type="text"
@@ -86,7 +86,7 @@ const TaskForm = ({ isOpen, onClose, taskToEdit = null }) => {
             value={formData.tieuDe}
             onChange={handleChange}
             className={inputClasses.tieuDe}
-            placeholder="Enter task title..."
+            placeholder="Nhập tiêu đề công việc..."
             autoFocus
           />
           {errors.tieuDe && (
@@ -97,7 +97,7 @@ const TaskForm = ({ isOpen, onClose, taskToEdit = null }) => {
         {/* Description */}
         <div>
           <label className="block font-mono text-xs text-muted uppercase tracking-wider mb-2">
-            Description <span className="text-neon-red">*</span>
+            Mô tả <span className="text-neon-red">*</span>
           </label>
           <textarea
             name="moTa"
@@ -105,7 +105,7 @@ const TaskForm = ({ isOpen, onClose, taskToEdit = null }) => {
             onChange={handleChange}
             rows={4}
             className={inputClasses.moTa}
-            placeholder="Enter task description..."
+            placeholder="Nhập mô tả công việc..."
           />
           {errors.moTa && (
             <p className="mt-1 font-mono text-xs text-neon-red"># Error: {errors.moTa}</p>
@@ -115,7 +115,7 @@ const TaskForm = ({ isOpen, onClose, taskToEdit = null }) => {
         {/* Deadline */}
         <div>
           <label className="block font-mono text-xs text-muted uppercase tracking-wider mb-2">
-            Deadline <span className="text-neon-red">*</span>
+            Hạn chót <span className="text-neon-red">*</span>
           </label>
           <input
             type="datetime-local"
@@ -133,17 +133,17 @@ const TaskForm = ({ isOpen, onClose, taskToEdit = null }) => {
         <div className="p-4 rounded-lg bg-neon-cyan/5 border border-neon-cyan/20">
           <p className="font-mono text-xs text-neon-cyan">
             <FaTerminal className="inline w-3 h-3 mr-2" />
-            Transaction will be signed via MetaMask
+            Giao dịch sẽ được ký bởi MetaMask
           </p>
         </div>
 
         {/* Actions */}
         <div className="flex justify-end gap-3 pt-3 border-t border-border">
           <Button type="button" variant="ghost" onClick={onClose} disabled={isSubmitting}>
-            CANCEL
+            HỦY BỎ
           </Button>
           <Button type="submit" variant="primary" loading={isSubmitting}>
-            {taskToEdit ? 'UPDATE' : 'CREATE'}
+            {taskToEdit ? 'CẬP NHẬT' : 'TẠO MỚI'}
           </Button>
         </div>
       </form>

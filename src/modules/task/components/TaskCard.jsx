@@ -66,12 +66,12 @@ const TaskCard = ({ task, onEdit, index = 0 }) => {
 
   // Status config
   const status = task.daHoanThanh
-    ? { variant: 'success', text: 'DONE' }
+    ? { variant: 'success', text: 'XONG' }
     : isOverdue
-      ? { variant: 'danger', text: 'OVERDUE' }
+      ? { variant: 'danger', text: 'QUÁ HẠN' }
       : isNearDeadline
-        ? { variant: 'warning', text: 'URGENT' }
-        : { variant: 'info', text: 'ACTIVE' };
+        ? { variant: 'warning', text: 'GẤP' }
+        : { variant: 'info', text: 'ĐANG CHẠY' };
 
   return (
     <>
@@ -119,7 +119,7 @@ const TaskCard = ({ task, onEdit, index = 0 }) => {
             <div className="flex items-center gap-2 font-mono text-xs text-muted">
               <FaUser className="w-3 h-3" />
               <span>{formatDiaChi(task.owner)}</span>
-              {isOwner && <Badge variant="success" size="xs">YOU</Badge>}
+              {isOwner && <Badge variant="success" size="xs">BẠN</Badge>}
             </div>
 
             <div className={`flex items-center gap-2 font-mono text-xs ${isOverdue ? 'text-neon-red' :
@@ -166,7 +166,7 @@ const TaskCard = ({ task, onEdit, index = 0 }) => {
                     {task.daHoanThanh && <FaCheck className="w-2 h-2 text-neutral-950" />}
                   </div>
                 )}
-                {task.daHoanThanh ? 'DONE' : 'COMPLETE'}
+                {task.daHoanThanh ? 'XONG' : 'HOÀN THÀNH'}
               </button>
             )}
 
@@ -197,10 +197,10 @@ const TaskCard = ({ task, onEdit, index = 0 }) => {
         isOpen={showDeleteDialog}
         onClose={() => setShowDeleteDialog(false)}
         onConfirm={handleDelete}
-        title="delete.task"
-        message={`rm -rf "${task.tieuDe}"? This action cannot be undone.`}
-        confirmText="DELETE"
-        cancelText="CANCEL"
+        title="xoa.cong_viec"
+        message={`rm -rf "${task.tieuDe}"? Hành động này không thể hoàn tác.`}
+        confirmText="XÓA"
+        cancelText="HỦY BỎ"
         variant="danger"
         isLoading={processingAction === 'delete'}
       />

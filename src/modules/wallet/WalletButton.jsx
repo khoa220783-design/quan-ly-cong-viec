@@ -90,6 +90,7 @@ const WalletButton = () => {
           <div className="p-3 border-b border-border">
             <div className="bg-surface rounded-lg p-3 border border-border">
               <p className="font-mono text-2xs text-muted uppercase mb-1">Balance</p>
+              <p className="font-mono text-2xs text-muted uppercase mb-1">Số dư</p>
               <p className="font-display text-xl font-bold text-neon-green">{formatSoDu(soDu)}</p>
             </div>
           </div>
@@ -98,11 +99,11 @@ const WalletButton = () => {
           <div className="p-2">
             <button onClick={copyAddress} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg font-mono text-xs text-secondary hover:text-primary hover:bg-surface-hover transition-colors">
               {copied ? <FaCheck className="w-3.5 h-3.5 text-neon-green" /> : <FaCopy className="w-3.5 h-3.5" />}
-              {copied ? 'COPIED!' : 'COPY ADDRESS'}
+              {copied ? 'ĐÃ SAO CHÉP!' : 'SAO CHÉP ĐỊA CHỈ'}
             </button>
             <button onClick={() => window.open(`https://sepolia.etherscan.io/address/${diaChiVi}`, '_blank')} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg font-mono text-xs text-secondary hover:text-primary hover:bg-surface-hover transition-colors">
               <FaExternalLinkAlt className="w-3.5 h-3.5" />
-              VIEW ON ETHERSCAN
+              XEM TRÊN ETHERSCAN
             </button>
             <div className="h-px bg-border my-1" />
             <button onClick={() => { ngatKetNoiVi(); setIsOpen(false); }} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg font-mono text-xs text-neon-red hover:bg-neon-red/10 transition-colors">
