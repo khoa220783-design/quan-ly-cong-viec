@@ -159,16 +159,4 @@ npm run lint         # Lint code
 - Đảm bảo contract đã được deploy
 - Verify contract trên Etherscan
 
-
-## 👨‍💻 Tác giả
-
-NGUYỄN HUY ĐIỀN
-
-
-## 📞 Liên hệ
-
-- Email: nhdiendnc.dev@gmail.com
-
----
-
 ⭐ Nếu project này hữu ích, hãy cho một star nhé!
