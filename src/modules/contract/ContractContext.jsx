@@ -73,42 +73,48 @@ export const ContractProvider = ({ children }) => {
   const suaCongViec = async (id, tieuDe, moTa, hanChot) => {
     if (!contract) {
       toast.error('Vui lòng kết nối ví trước!');
-      return null;
+      return false;
     }
     try {
       toast.loading('Đang cập nhật...', { id: 'update-task' });
       const tx = await contract.suaCongViec(id, tieuDe, moTa, hanChot);
       await tx.wait();
       toast.success('Cập nhật thành công!', { id: 'update-task' });
+      return true;
     } catch (error) {
       console.error('Lỗi khi sửa:', error);
       toast.error('Lỗi khi cập nhật', { id: 'update-task' });
+      return false;
     }
   };
 
   const xoaCongViec = async (id) => {
-    if (!contract) return;
+    if (!contract) return false;
     try {
       toast.loading('Đang xóa...', { id: 'delete-task' });
       const tx = await contract.xoaCongViec(id);
       await tx.wait();
       toast.success('Đã xóa!', { id: 'delete-task' });
+      return true;
     } catch (error) {
       console.error('Lỗi khi xóa:', error);
       toast.error('Lỗi khi xóa', { id: 'delete-task' });
+      return false;
     }
   };
 
   const danhDauHoanThanh = async (id, status) => {
-    if (!contract) return;
+    if (!contract) return false;
     try {
       toast.loading('Đang cập nhật...', { id: 'toggle-task' });
       const tx = await contract.danhDauHoanThanh(id, status);
       await tx.wait();
       toast.success(status ? 'Đã hoàn thành!' : 'Đã cập nhật', { id: 'toggle-task' });
+      return true;
     } catch (error) {
       console.error('Lỗi khi đánh dấu:', error);
       toast.error('Lỗi', { id: 'toggle-task' });
+      return false;
     }
   };
 

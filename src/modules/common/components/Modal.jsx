@@ -1,9 +1,10 @@
 /**
  * @file Modal.jsx
- * @description Premium Modal với light/dark support
+ * @description Terminal-style Modal
  */
 
 import React, { useEffect, useRef } from 'react';
+import { FaTimes } from 'react-icons/fa';
 
 const Modal = ({
   isOpen,
@@ -11,102 +12,82 @@ const Modal = ({
   title,
   children,
   size = 'md',
-  showCloseButton = true,
 }) => {
   const modalRef = useRef(null);
-  const previousFocusRef = useRef(null);
 
-  const sizeClasses = {
+  const sizes = {
     sm: 'max-w-md',
     md: 'max-w-lg',
     lg: 'max-w-2xl',
-    xl: 'max-w-4xl',
   };
 
   useEffect(() => {
     if (!isOpen) return;
 
-    previousFocusRef.current = document.activeElement;
     modalRef.current?.focus();
-
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape') onClose();
-
-      if (e.key === 'Tab') {
-        const focusable = modalRef.current?.querySelectorAll(
-          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-        );
-        if (!focusable?.length) return;
-
-        const first = focusable[0];
-        const last = focusable[focusable.length - 1];
-
-        if (e.shiftKey && document.activeElement === first) {
-          e.preventDefault();
-          last.focus();
-        } else if (!e.shiftKey && document.activeElement === last) {
-          e.preventDefault();
-          first.focus();
-        }
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
     document.body.style.overflow = 'hidden';
 
+    const handleEsc = (e) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', handleEsc);
+
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = '';
-      previousFocusRef.current?.focus();
+      document.removeEventListener('keydown', handleEsc);
     };
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm animate-fade-in"
+        className="absolute inset-0 bg-black/80 backdrop-blur-sm animate-fade-in"
         onClick={onClose}
       />
 
       {/* Modal */}
-      <div className="flex min-h-full items-center justify-center p-4">
-        <div
-          ref={modalRef}
-          tabIndex={-1}
-          className={`
-            relative w-full ${sizeClasses[size]}
-            bg-white dark:bg-zinc-800
-            rounded-2xl shadow-2xl
-            animate-scale-in
-            border border-zinc-200 dark:border-zinc-700
-          `}
-          onClick={(e) => e.stopPropagation()}
-        >
-          {/* Header */}
-          <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-100 dark:border-zinc-700">
-            <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">
-              {title}
-            </h3>
-            {showCloseButton && (
+      <div
+        ref={modalRef}
+        tabIndex={-1}
+        role="dialog"
+        aria-modal="true"
+        className={`
+          relative w-full ${sizes[size]}
+          bg-surface-elevated border border-border rounded-xl
+          shadow-2xl shadow-black/50
+          animate-scale-in overflow-hidden
+        `}
+      >
+        {/* Terminal-style header */}
+        <div className="flex items-center justify-between px-5 py-3 border-b border-border bg-surface">
+          <div className="flex items-center gap-3">
+            {/* Window controls */}
+            <div className="flex items-center gap-1.5">
               <button
                 onClick={onClose}
-                className="p-2 rounded-lg text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors"
-                aria-label="Đóng"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            )}
+                className="w-3 h-3 rounded-full bg-neon-red/80 hover:bg-neon-red transition-colors"
+              />
+              <div className="w-3 h-3 rounded-full bg-neon-orange/80" />
+              <div className="w-3 h-3 rounded-full bg-neon-green/80" />
+            </div>
+            <span className="font-mono text-xs text-muted uppercase tracking-widest">
+              {title}
+            </span>
           </div>
+          <button
+            onClick={onClose}
+            className="p-1 rounded text-muted hover:text-primary hover:bg-surface-hover transition-colors"
+          >
+            <FaTimes className="w-3.5 h-3.5" />
+          </button>
+        </div>
 
-          {/* Content */}
-          <div className="px-6 py-5">
-            {children}
-          </div>
+        {/* Content */}
+        <div className="p-5">
+          {children}
         </div>
       </div>
     </div>
