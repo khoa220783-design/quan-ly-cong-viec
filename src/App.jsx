@@ -1,9 +1,9 @@
 /**
  * @file App.jsx
- * @description Component chính với Theme support
+ * @description Neo-Brutalist Terminal Theme - Main App
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { ThemeProvider, useTheme } from './modules/common/ThemeContext';
 import { WalletProvider } from './modules/wallet/WalletContext';
@@ -12,17 +12,34 @@ import { TaskProvider } from './modules/task/TaskContext';
 import WalletButton from './modules/wallet/WalletButton';
 import ThemeToggle from './modules/common/components/ThemeToggle';
 import TaskList from './modules/task/components/TaskList';
-import { FaGithub } from 'react-icons/fa';
 
-// Main App Content (needs to be inside ThemeProvider)
+// Separate Clock component to prevent re-rendering entire app
+const LiveClock = memo(() => {
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-elevated/50 border border-border">
+      <div className="w-2 h-2 rounded-full bg-neon-green animate-pulse" />
+      <span className="font-mono text-xs text-secondary">
+        {currentTime.toLocaleTimeString('en-US', { hour12: false })}
+      </span>
+    </div>
+  );
+});
+
+LiveClock.displayName = 'LiveClock';
+
 function AppContent() {
   const { isDark } = useTheme();
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 10);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -31,122 +48,90 @@ function AppContent() {
     <WalletProvider>
       <ContractProvider>
         <TaskProvider>
-          <div className={`min-h-screen transition-colors duration-300 ${isDark
-              ? 'bg-zinc-900'
-              : 'bg-gradient-to-br from-zinc-50 to-zinc-100'
-            }`}>
+          <div className="min-h-screen bg-[var(--bg-primary)] transition-colors duration-300">
             {/* Header */}
-            <header
-              className={`
-                fixed top-0 left-0 right-0 z-50 
-                transition-all duration-300
-                ${isScrolled
-                  ? 'bg-white/80 dark:bg-zinc-900/80 backdrop-blur-lg shadow-sm border-b border-zinc-200/50 dark:border-zinc-800'
-                  : 'bg-transparent'
-                }
-              `}
-            >
-              <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <header className={`
+              fixed top-0 left-0 right-0 z-50 transition-all duration-300
+              ${isScrolled ? 'glass border-b border-border' : 'bg-transparent'}
+            `}>
+              <div className="max-w-7xl mx-auto px-6">
                 <div className="flex justify-between items-center h-16">
                   {/* Logo */}
-                  <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-500 to-violet-600 flex items-center justify-center shadow-lg shadow-violet-500/20">
-                      <svg
-                        className="w-5 h-5 text-white"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
-                        />
-                      </svg>
-                    </div>
-                    <div>
-                      <h1 className="text-lg font-semibold text-zinc-800 dark:text-white">
-                        TaskManager
-                      </h1>
-                      <p className="text-xs text-zinc-500 dark:text-zinc-400 hidden sm:block">
-                        Blockchain-powered
-                      </p>
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-3">
+                      {/* Terminal icon */}
+                      <div className="w-10 h-10 rounded-lg bg-neon-green/10 border border-neon-green/30 flex items-center justify-center">
+                        <span className="font-mono text-neon-green font-bold text-lg">{">"}</span>
+                        <span className="font-mono text-neon-green font-bold text-lg animate-blink">_</span>
+                      </div>
+                      <div>
+                        <h1 className="font-display font-bold text-lg text-primary tracking-tight">
+                          task<span className="text-neon-green">mgr</span>
+                        </h1>
+                        <p className="font-mono text-2xs text-muted uppercase tracking-widest">
+                          blockchain v1.0
+                        </p>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Right Side */}
-                  <div className="flex items-center gap-3">
-                    {/* Network Badge */}
-                    <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20">
-                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                      <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">Sepolia</span>
+                  {/* Right side */}
+                  <div className="flex items-center gap-4">
+                    {/* Live time - isolated component */}
+                    <LiveClock />
+
+                    {/* Network badge */}
+                    <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-neon-cyan/10 border border-neon-cyan/30">
+                      <span className="font-mono text-xs text-neon-cyan font-medium">SEPOLIA</span>
                     </div>
 
-                    {/* Theme Toggle */}
                     <ThemeToggle />
-
-                    {/* Wallet Button */}
                     <WalletButton />
                   </div>
                 </div>
               </div>
             </header>
 
-            {/* Main Content */}
+            {/* Main */}
             <main className="pt-24 pb-16 min-h-screen">
-              <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="max-w-7xl mx-auto px-6">
                 <TaskList />
               </div>
             </main>
 
             {/* Footer */}
-            <footer className="border-t border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-900/50">
-              <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <footer className="border-t border-border py-6">
+              <div className="max-w-7xl mx-auto px-6">
                 <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-                  <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                    © 2025 TaskManager • Built on Ethereum
-                  </p>
-                  <div className="flex items-center gap-4">
-                    <a
-                      href="#"
-                      className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors"
-                      aria-label="GitHub"
-                    >
-                      <FaGithub className="w-5 h-5" />
-                    </a>
+                  <div className="font-mono text-xs text-dim">
+                    <span className="text-neon-green">$</span> built on ethereum • contract deployed
+                  </div>
+                  <div className="font-mono text-xs text-dim">
+                    © 2025 taskmgr<span className="animate-blink">_</span>
                   </div>
                 </div>
               </div>
             </footer>
           </div>
 
-          {/* Toast Notifications */}
+          {/* Toast */}
           <Toaster
-            position="top-right"
+            position="bottom-right"
             toastOptions={{
               duration: 3000,
               style: {
-                background: isDark ? '#27272a' : '#ffffff',
-                color: isDark ? '#fafafa' : '#18181b',
-                border: `1px solid ${isDark ? '#3f3f46' : '#e4e4e7'}`,
-                borderRadius: '12px',
-                padding: '12px 16px',
-                boxShadow: isDark
-                  ? '0 10px 15px rgba(0, 0, 0, 0.3)'
-                  : '0 10px 15px rgba(0, 0, 0, 0.1)',
+                background: 'var(--bg-elevated)',
+                color: 'var(--text-primary)',
+                border: '1px solid var(--border-subtle)',
+                borderRadius: '8px',
+                fontFamily: 'JetBrains Mono, monospace',
+                fontSize: '13px',
               },
               success: {
-                iconTheme: {
-                  primary: '#10b981',
-                  secondary: '#fff',
-                },
+                iconTheme: { primary: '#22c55e', secondary: '#141414' },
               },
               error: {
-                iconTheme: {
-                  primary: '#ef4444',
-                  secondary: '#fff',
-                },
+                iconTheme: { primary: '#ef4444', secondary: '#141414' },
               },
             }}
           />
@@ -156,7 +141,6 @@ function AppContent() {
   );
 }
 
-// App wrapper with ThemeProvider
 function App() {
   return (
     <ThemeProvider>

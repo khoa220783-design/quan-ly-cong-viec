@@ -1,62 +1,73 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Sora:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* ============================================
-   CSS CUSTOM PROPERTIES - Light Theme (Default)
+   NEO-BRUTALIST TERMINAL THEME
    ============================================ */
+
 :root {
-  /* Background */
-  --bg-primary: #ffffff;
-  --bg-secondary: #f4f4f5;
-  --bg-tertiary: #e4e4e7;
-  --bg-card: #ffffff;
-
-  /* Text */
-  --text-primary: #18181b;
-  --text-secondary: #52525b;
-  --text-muted: #a1a1aa;
-
-  /* Brand */
-  --brand-primary: #8b5cf6;
-  --brand-secondary: #a78bfa;
+  /* Backgrounds */
+  --bg-void: #050505;
+  --bg-primary: #0a0a0a;
+  --bg-elevated: #141414;
+  --bg-surface: #1a1a1a;
+  --bg-hover: #262626;
 
   /* Borders */
-  --border-default: #e4e4e7;
-  --border-hover: #a78bfa;
+  --border-subtle: #262626;
+  --border-default: #333333;
+  --border-strong: #404040;
 
-  /* Shadows */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
-  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  /* Accent - Neon Terminal */
+  --accent-primary: #22c55e;
+  --accent-primary-dim: rgba(34, 197, 94, 0.15);
+  --accent-primary-glow: rgba(34, 197, 94, 0.4);
+
+  --accent-cyan: #06b6d4;
+  --accent-cyan-dim: rgba(6, 182, 212, 0.15);
+
+  --accent-orange: #f97316;
+  --accent-orange-dim: rgba(249, 115, 22, 0.15);
+
+  --accent-red: #ef4444;
+  --accent-red-dim: rgba(239, 68, 68, 0.15);
+
+  /* Text */
+  --text-primary: #fafafa;
+  --text-secondary: #a3a3a3;
+  --text-muted: #737373;
+  --text-dim: #525252;
+
+  /* Effects */
+  --glow-green: 0 0 20px rgba(34, 197, 94, 0.3);
+  --glow-cyan: 0 0 20px rgba(6, 182, 212, 0.3);
 }
 
-/* ============================================
-   Dark Theme
-   ============================================ */
-.dark {
-  --bg-primary: #18181b;
-  --bg-secondary: #27272a;
-  --bg-tertiary: #3f3f46;
-  --bg-card: rgba(39, 39, 42, 0.8);
+/* Light mode overrides */
+.light {
+  --bg-void: #f5f5f5;
+  --bg-primary: #fafafa;
+  --bg-elevated: #ffffff;
+  --bg-surface: #ffffff;
+  --bg-hover: #f0f0f0;
 
-  --text-primary: #fafafa;
-  --text-secondary: #a1a1aa;
-  --text-muted: #71717a;
+  --border-subtle: #e5e5e5;
+  --border-default: #d4d4d4;
+  --border-strong: #a3a3a3;
 
-  --border-default: #3f3f46;
-  --border-hover: #a78bfa;
-
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+  --text-primary: #0a0a0a;
+  --text-secondary: #525252;
+  --text-muted: #737373;
+  --text-dim: #a3a3a3;
 }
 
 /* ============================================
    BASE STYLES
    ============================================ */
+
 * {
   margin: 0;
   padding: 0;
@@ -68,84 +79,172 @@ html {
 }
 
 body {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background-color: var(--bg-primary);
+  font-family: 'Sora', system-ui, sans-serif;
+  /* Default to Readable Font */
+  background: var(--bg-primary);
   color: var(--text-primary);
   min-height: 100vh;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.3s ease;
 }
 
-/* Dark mode background */
-.dark body {
-  background: linear-gradient(135deg, #18181b 0%, #1f1f23 50%, #18181b 100%);
+/* Noise texture overlay - Subtle */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  opacity: 0.015;
+  /* Reduced from 0.03 for better comfort */
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* Scanline effect - Subtle */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.02) 2px,
+      /* Reduced opacity */
+      rgba(0, 0, 0, 0.02) 4px);
+  pointer-events: none;
+  z-index: 999;
 }
 
 /* ============================================
-   UTILITY CLASSES
+   TYPOGRAPHY
    ============================================ */
 
-/* Gradient Text */
+.font-display {
+  font-family: 'Sora', sans-serif;
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Terminal text effect */
+.terminal-text {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--accent-primary);
+}
+
+/* Gradient text */
 .gradient-text {
-  background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-cyan) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-/* Glass effect for dark mode */
-.dark .glass {
-  background: rgba(39, 39, 42, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+/* ============================================
+   COMPONENTS
+   ============================================ */
+
+/* Card base */
+.card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  transition: all 0.2s ease;
 }
 
-/* Light mode glass */
-.glass {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+.card:hover {
+  border-color: var(--border-default);
+  box-shadow: var(--glow-green);
+}
+
+/* Neon glow button */
+.btn-neon {
+  background: var(--accent-primary);
+  color: #000;
+  font-weight: 600;
+  border: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-neon::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.2) 0%,
+      transparent 50%,
+      rgba(0, 0, 0, 0.1) 100%);
+}
+
+.btn-neon:hover {
+  box-shadow: var(--glow-green);
+  transform: translateY(-1px);
+}
+
+/* Terminal-style input */
+.input-terminal {
+  background: var(--bg-void);
+  border: 1px solid var(--border-default);
+  color: var(--text-primary);
+  font-family: 'JetBrains Mono', monospace;
+  padding: 12px 16px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.input-terminal:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px var(--accent-primary-dim);
+}
+
+.input-terminal::placeholder {
+  color: var(--text-dim);
+}
+
+/* Badge - blocky style */
+.badge-terminal {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 4px 8px;
+  border-radius: 4px;
 }
 
 /* ============================================
    ANIMATIONS
    ============================================ */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
+
+@keyframes blink {
+
+  0%,
+  50% {
+    opacity: 1;
   }
 
-  to {
-    opacity: 1;
+  51%,
+  100% {
+    opacity: 0;
   }
 }
 
-@keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
+@keyframes glow-pulse {
+
+  0%,
+  100% {
+    box-shadow: 0 0 5px var(--accent-primary-glow);
   }
 
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  50% {
+    box-shadow: 0 0 20px var(--accent-primary-glow);
   }
 }
 
-@keyframes slideUp {
+@keyframes slide-up {
   from {
     opacity: 0;
     transform: translateY(10px);
@@ -157,85 +256,144 @@ body {
   }
 }
 
-.animate-fade-in {
-  animation: fadeIn 0.2s ease-out forwards;
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.animate-scale-in {
-  animation: scaleIn 0.2s ease-out forwards;
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
-.animate-slide-down {
-  animation: slideDown 0.2s ease-out forwards;
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes typewriter {
+  from {
+    width: 0;
+  }
+
+  to {
+    width: 100%;
+  }
+}
+
+.animate-blink {
+  animation: blink 1s step-end infinite;
+}
+
+.animate-glow-pulse {
+  animation: glow-pulse 2s ease-in-out infinite;
 }
 
 .animate-slide-up {
-  animation: slideUp 0.2s ease-out forwards;
+  animation: slide-up 0.3s ease-out forwards;
+}
+
+.animate-slide-down {
+  animation: slide-down 0.3s ease-out forwards;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.2s ease-out forwards;
+}
+
+/* Staggered entrance */
+.stagger-1 {
+  animation-delay: 0.05s;
+}
+
+.stagger-2 {
+  animation-delay: 0.1s;
+}
+
+.stagger-3 {
+  animation-delay: 0.15s;
+}
+
+.stagger-4 {
+  animation-delay: 0.2s;
+}
+
+.stagger-5 {
+  animation-delay: 0.25s;
+}
+
+.stagger-6 {
+  animation-delay: 0.3s;
 }
 
 /* ============================================
    SCROLLBAR
    ============================================ */
+
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg-secondary);
-  border-radius: 4px;
+  background: var(--bg-void);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--bg-tertiary);
-  border-radius: 4px;
+  background: var(--border-default);
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #71717a;
+  background: var(--accent-primary);
 }
 
 /* ============================================
-   FORM ELEMENTS
+   ACCESSIBILITY & FOCUS
    ============================================ */
-input,
-textarea,
-select {
-  font-family: inherit;
-}
 
-input::placeholder,
-textarea::placeholder {
-  color: var(--text-muted);
-}
-
-/* Focus States */
-input:focus,
-textarea:focus,
-select:focus {
-  outline: none;
-}
-
-/* ============================================
-   ACCESSIBILITY
-   ============================================ */
 @media (prefers-reduced-motion: reduce) {
 
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+
+  body::after {
+    display: none;
   }
 }
 
 :focus-visible {
-  outline: 2px solid var(--brand-primary);
+  outline: 2px solid var(--accent-primary);
   outline-offset: 2px;
 }
 
-/* Skip to Content */
 .sr-only {
   position: absolute;
   width: 1px;
@@ -244,21 +402,27 @@ select:focus {
   margin: -1px;
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border-width: 0;
+  border: 0;
 }
 
 /* ============================================
-   SKELETON LOADING
+   UTILITIES
    ============================================ */
+
+.glass {
+  background: rgba(20, 20, 20, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.light .glass {
+  background: rgba(255, 255, 255, 0.8);
+}
+
 .skeleton {
-  background: linear-gradient(90deg,
-      var(--bg-tertiary) 25%,
-      var(--bg-secondary) 50%,
-      var(--bg-tertiary) 75%);
+  background: linear-gradient(90deg, var(--bg-surface) 25%, var(--bg-hover) 50%, var(--bg-surface) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
-  border-radius: 8px;
 }
 
 @keyframes shimmer {
@@ -269,30 +433,4 @@ select:focus {
   100% {
     background-position: 200% 0;
   }
-}
-
-/* ============================================
-   CUSTOM COMPONENTS
-   ============================================ */
-
-/* Card hover effect */
-.card-hover {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.card-hover:hover {
-  transform: translateY(-2px);
-}
-
-/* Button press effect */
-.btn-press:active {
-  transform: scale(0.98);
-}
-
-/* Smooth theme transition */
-.theme-transition {
-  transition:
-    background-color 0.3s ease,
-    border-color 0.3s ease,
-    color 0.3s ease;
 }
