@@ -241,22 +241,25 @@ export const ContractProvider = ({ children }) => {
             const idStr = id.toString();
 
             try {
-              // TaskDApp mới chỉ dùng 1 hàm getTaskInfo trả về 6 giá trị
-              // returns (address o, address a, uint256 d, uint256 r, bool c, bool rd)
+              // TaskDApp Update: getTaskInfo now returns 8 values
+              // returns (o, a, title, desc, deadline, reward, completed, claimed)
               const res = await c.getTaskInfo(id);
               const update = latestUpdates[idStr];
+
+              const title = res[2] || (update ? update.args.title : e.args.title);
+              const desc = res[3] || (update ? update.args.desc : e.args.desc);
 
               return {
                 id: id,
                 owner: (res[0] || e.args.owner || '').toString(),
-                tieuDe: update ? update.args.title : e.args.title,
-                moTa: update ? update.args.desc : e.args.desc,
-                hanChot: update ? update.args.deadline : e.args.deadline,
-                daHoanThanh: res[4] !== undefined ? res[4] : false,
-                tienThuong: res[3] || 0n,
+                tieuDe: title,
+                moTa: desc,
+                hanChot: res[4], // deadline is now index 4
+                daHoanThanh: res[6], // completed is now index 6
+                tienThuong: res[5] || 0n, // reward is now index 5
                 nguoiDuocGan: (res[1] || '0x0000000000000000000000000000000000000000').toString(),
-                thoiGianTao: 0n, // Bản minimal không lưu createdAt để tiết kiệm gas
-                daNhanThuong: res[5] || false
+                thoiGianTao: 0n,
+                daNhanThuong: res[7] || false // rewardClaimed is now index 7
               };
             } catch (err) {
               console.error(`Lỗi parse task ${idStr}:`, err);
