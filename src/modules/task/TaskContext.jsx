@@ -36,7 +36,9 @@ export const TaskProvider = ({ children }) => {
   const [boLoc, setBoLoc] = useState({
     trangThai: TRANG_THAI.TAT_CA,
     sapXep: 'moi-nhat',
-    tuKhoa: ''
+    tuKhoa: '',
+    doUuTien: null,
+    danhMuc: null
   });
 
   /**
@@ -60,6 +62,8 @@ export const TaskProvider = ({ children }) => {
         owner: task.owner,
         tieuDe: task.tieuDe,
         moTa: task.moTa,
+        danhMuc: task.danhMuc || '',
+        doUuTien: task.doUuTien !== undefined ? task.doUuTien : 0,
         hanChot: task.hanChot.toString(),
         daHoanThanh: task.daHoanThanh,
         tienThuong: task.tienThuong.toString(),
@@ -181,6 +185,18 @@ export const TaskProvider = ({ children }) => {
       );
     }
 
+    // Lọc theo độ ưu tiên
+    if (boLoc.doUuTien !== null && boLoc.doUuTien !== undefined) {
+      filtered = filtered.filter(task => task.doUuTien === boLoc.doUuTien);
+    }
+
+    // Lọc theo danh mục
+    if (boLoc.danhMuc) {
+      filtered = filtered.filter(task =>
+        task.danhMuc && task.danhMuc.toLowerCase() === boLoc.danhMuc.toLowerCase()
+      );
+    }
+
     // Sắp xếp
     if (boLoc.sapXep === 'moi-nhat') {
       filtered.sort((a, b) => Number(b.thoiGianTao) - Number(a.thoiGianTao));
@@ -188,6 +204,8 @@ export const TaskProvider = ({ children }) => {
       filtered.sort((a, b) => Number(a.thoiGianTao) - Number(b.thoiGianTao));
     } else if (boLoc.sapXep === 'deadline') {
       filtered.sort((a, b) => Number(a.hanChot) - Number(b.hanChot));
+    } else if (boLoc.sapXep === 'priority') {
+      filtered.sort((a, b) => (b.doUuTien || 0) - (a.doUuTien || 0));
     }
 
     return filtered;
