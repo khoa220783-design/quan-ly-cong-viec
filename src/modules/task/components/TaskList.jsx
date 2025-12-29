@@ -49,6 +49,7 @@ const TaskList = () => {
     { value: 'moi-nhat', label: 'Mới Nhất' },
     { value: 'cu-nhat', label: 'Cũ Nhất' },
     { value: 'deadline', label: 'Hạn Chót' },
+    { value: 'priority', label: 'Độ Ưu Tiên' },
   ];
 
   // Terminal stat card
@@ -127,7 +128,7 @@ const TaskList = () => {
           </form>
 
           {/* Filter buttons */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <button
               onClick={() => capNhatBoLoc({ trangThai: TRANG_THAI.TAT_CA })}
               className={`px-4 py-2.5 rounded-lg font-mono text-xs font-medium transition-all ${boLoc.trangThai === TRANG_THAI.TAT_CA
@@ -147,6 +148,32 @@ const TaskList = () => {
             >
               CỦA TÔI
             </button>
+
+            {/* Priority Filter */}
+            <select
+              value={boLoc.doUuTien ?? 'all'}
+              onChange={(e) => capNhatBoLoc({ doUuTien: e.target.value === 'all' ? null : parseInt(e.target.value) })}
+              className="px-3 py-2.5 bg-surface-hover border border-border rounded-lg font-mono text-xs text-secondary hover:text-primary focus:outline-none focus:border-neon-green transition-colors"
+            >
+              <option value="all">Độ ưu tiên</option>
+              <option value="2">🔴 Cao</option>
+              <option value="1">🟡 Trung bình</option>
+              <option value="0">🟢 Thấp</option>
+            </select>
+
+            {/* Category Filter */}
+            <select
+              value={boLoc.danhMuc ?? 'all'}
+              onChange={(e) => capNhatBoLoc({ danhMuc: e.target.value === 'all' ? null : e.target.value })}
+              className="px-3 py-2.5 bg-surface-hover border border-border rounded-lg font-mono text-xs text-secondary hover:text-primary focus:outline-none focus:border-neon-green transition-colors"
+            >
+              <option value="all">Danh mục</option>
+              <option value="Development">Development</option>
+              <option value="Design">Design</option>
+              <option value="Marketing">Marketing</option>
+              <option value="Testing">Testing</option>
+              <option value="Other">Other</option>
+            </select>
           </div>
 
           {/* Sort - Custom Select */}
