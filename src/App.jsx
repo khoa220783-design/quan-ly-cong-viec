@@ -6,12 +6,13 @@
 import React, { useState, useEffect, memo } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { ThemeProvider, useTheme } from './modules/common/ThemeContext';
-import { WalletProvider } from './modules/wallet/WalletContext';
+import { WalletProvider, useWalletContext } from './modules/wallet/WalletContext';
 import { ContractProvider } from './modules/contract/ContractContext';
 import { TaskProvider } from './modules/task/TaskContext';
 import WalletButton from './modules/wallet/WalletButton';
 import ThemeToggle from './modules/common/components/ThemeToggle';
 import TaskList from './modules/task/components/TaskList';
+import LandingPage from './modules/wallet/components/LandingPage';
 
 // Separate Clock component to prevent re-rendering entire app
 const LiveClock = memo(() => {
@@ -33,6 +34,17 @@ const LiveClock = memo(() => {
 });
 
 LiveClock.displayName = 'LiveClock';
+
+// MainContent component - shows LandingPage or TaskList based on wallet connection
+const MainContent = () => {
+  const { diaChiVi } = useWalletContext();
+
+  if (!diaChiVi) {
+    return <LandingPage />;
+  }
+
+  return <TaskList />;
+};
 
 function AppContent() {
   const { isDark } = useTheme();
@@ -95,7 +107,7 @@ function AppContent() {
             {/* Main */}
             <main className="pt-24 pb-16 min-h-screen">
               <div className="max-w-7xl mx-auto px-6">
-                <TaskList />
+                <MainContent />
               </div>
             </main>
 
