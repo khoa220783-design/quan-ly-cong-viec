@@ -139,7 +139,7 @@ const TaskCard = ({ task, onEdit, index = 0 }) => {
           ${isProcessing ? 'opacity-60 pointer-events-none' : ''}
           ${task.daHoanThanh
             ? 'border-neon-green/20'
-            : isOverdue
+            : timeStatus.isOverdue
               ? 'border-neon-red/30'
               : 'border-border hover:border-border-strong hover:shadow-neon-green/5'
           }
