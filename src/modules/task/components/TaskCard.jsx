@@ -101,10 +101,25 @@ const TaskCard = ({ task, onEdit, index = 0 }) => {
           {/* Header row */}
           <div className="flex items-start justify-between gap-3 mb-3">
             <div className="flex-1 min-w-0">
-              <h3 className={`font-display font-semibold text-sm mb-1 truncate ${task.daHoanThanh ? 'line-through text-muted' : 'text-primary'
-                }`}>
-                {task.tieuDe}
-              </h3>
+              <div className="flex items-center gap-2 mb-1">
+                <h3 className={`font-display font-semibold text-sm truncate ${task.daHoanThanh ? 'line-through text-muted' : 'text-primary'
+                  }`}>
+                  {task.tieuDe}
+                </h3>
+                {task.danhMuc && (
+                  <Badge variant="default" size="xs">
+                    {task.danhMuc}
+                  </Badge>
+                )}
+                {task.doUuTien !== undefined && (
+                  <Badge
+                    variant={task.doUuTien === 2 ? 'danger' : task.doUuTien === 1 ? 'warning' : 'default'}
+                    size="xs"
+                  >
+                    {task.doUuTien === 2 ? '🔴 CAO' : task.doUuTien === 1 ? '🟡 TB' : '🟢 THẤP'}
+                  </Badge>
+                )}
+              </div>
               <p className="text-sm text-secondary line-clamp-2 leading-relaxed mt-1">
                 {task.moTa}
               </p>
