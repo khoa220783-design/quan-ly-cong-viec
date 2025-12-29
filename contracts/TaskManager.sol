@@ -5,6 +5,8 @@ contract TaskManager {
     struct Task {
         address owner;
         address assignedTo;
+        string title;
+        string description;
         uint256 deadline;
         uint256 reward;
         bool completed;
@@ -23,6 +25,8 @@ contract TaskManager {
         _tasks[_count] = Task({
             owner: msg.sender,
             assignedTo: address(0),
+            title: t,
+            description: d,
             deadline: h,
             reward: 0,
             completed: false,
@@ -34,6 +38,8 @@ contract TaskManager {
     function suaCongViec(uint256 id, string memory t, string memory d, uint256 h) public {
         require(_tasks[id].owner == msg.sender, "Not owner");
         _tasks[id].deadline = h;
+        _tasks[id].title = t;
+        _tasks[id].description = d;
         emit TaskUpdated(id, t, d, h);
     }
 
@@ -76,13 +82,15 @@ contract TaskManager {
     function getTaskInfo(uint256 id) public view returns (
         address o,
         address a,
-        uint256 d,
+        string memory t,
+        string memory d,
+        uint256 dl,
         uint256 r,
         bool c,
         bool rd
     ) {
-        Task memory t = _tasks[id];
-        return (t.owner, t.assignedTo, t.deadline, t.reward, t.completed, t.rewardClaimed);
+        Task memory task = _tasks[id];
+        return (task.owner, task.assignedTo, task.title, task.description, task.deadline, task.reward, task.completed, task.rewardClaimed);
     }
 
     function demTongCongViec() public view returns (uint256) {
