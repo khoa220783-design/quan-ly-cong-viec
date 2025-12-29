@@ -241,8 +241,7 @@ export const ContractProvider = ({ children }) => {
             const idStr = id.toString();
 
             try {
-              // TaskDApp Update: getTaskInfo now returns 8 values
-              // returns (o, a, title, desc, deadline, reward, completed, claimed)
+
               const res = await c.getTaskInfo(id);
               const update = latestUpdates[idStr];
 
