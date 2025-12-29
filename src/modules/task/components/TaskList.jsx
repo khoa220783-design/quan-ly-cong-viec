@@ -150,30 +150,32 @@ const TaskList = () => {
             </button>
 
             {/* Priority Filter */}
-            <select
-              value={boLoc.doUuTien ?? 'all'}
-              onChange={(e) => capNhatBoLoc({ doUuTien: e.target.value === 'all' ? null : parseInt(e.target.value) })}
-              className="px-3 py-2.5 bg-surface-hover border border-border rounded-lg font-mono text-xs text-secondary hover:text-primary focus:outline-none focus:border-neon-green transition-colors"
-            >
-              <option value="all">Độ ưu tiên</option>
-              <option value="2">🔴 Cao</option>
-              <option value="1">🟡 Trung bình</option>
-              <option value="0">🟢 Thấp</option>
-            </select>
+            <Select
+              options={[
+                { value: 'all', label: 'Độ ưu tiên' },
+                { value: '2', label: '🔴 Cao' },
+                { value: '1', label: '🟡 Trung bình' },
+                { value: '0', label: '🟢 Thấp' },
+              ]}
+              value={boLoc.doUuTien !== null && boLoc.doUuTien !== undefined ? String(boLoc.doUuTien) : 'all'}
+              onChange={(val) => capNhatBoLoc({ doUuTien: val === 'all' ? null : parseInt(val) })}
+              className="w-36"
+            />
 
             {/* Category Filter */}
-            <select
+            <Select
+              options={[
+                { value: 'all', label: 'Danh mục' },
+                { value: 'Development', label: 'Development' },
+                { value: 'Design', label: 'Design' },
+                { value: 'Marketing', label: 'Marketing' },
+                { value: 'Testing', label: 'Testing' },
+                { value: 'Other', label: 'Other' },
+              ]}
               value={boLoc.danhMuc ?? 'all'}
-              onChange={(e) => capNhatBoLoc({ danhMuc: e.target.value === 'all' ? null : e.target.value })}
-              className="px-3 py-2.5 bg-surface-hover border border-border rounded-lg font-mono text-xs text-secondary hover:text-primary focus:outline-none focus:border-neon-green transition-colors"
-            >
-              <option value="all">Danh mục</option>
-              <option value="Development">Development</option>
-              <option value="Design">Design</option>
-              <option value="Marketing">Marketing</option>
-              <option value="Testing">Testing</option>
-              <option value="Other">Other</option>
-            </select>
+              onChange={(val) => capNhatBoLoc({ danhMuc: val === 'all' ? null : val })}
+              className="w-36"
+            />
           </div>
 
           {/* Sort - Custom Select */}
