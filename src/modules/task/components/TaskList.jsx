@@ -5,12 +5,13 @@
 
 import React, { useState, useMemo } from 'react';
 import { ethers } from 'ethers';
-import { FaPlus, FaSearch, FaTh, FaList, FaCheckCircle, FaClock, FaExclamationTriangle, FaCoins, FaTerminal } from 'react-icons/fa';
+import { FaPlus, FaTh, FaList } from 'react-icons/fa';
 import { useTaskContext } from '../TaskContext';
 import { useWalletContext } from '../../wallet/WalletContext';
 import { TRANG_THAI } from '../../common/utils/constants';
 import TaskCard from './TaskCard';
 import TaskForm from './TaskForm';
+import StatsPanel from './StatsPanel';
 import Button from '../../common/components/Button';
 import Select from '../../common/components/Select';
 import { TaskCardSkeleton } from '../../common/components/Loading';
@@ -98,17 +99,8 @@ const TaskList = () => {
         )}
       </div>
 
-      {/* Stats Grid */}
-      {
-        diaChiVi && (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <StatCard icon={FaTerminal} label="Tổng Số" value={stats.total} color="text-neon-cyan" />
-            <StatCard icon={FaCheckCircle} label="Hoàn Thành" value={stats.completed} color="text-neon-green" sub={stats.total > 0 ? `${Math.round((stats.completed / stats.total) * 100)}%` : null} />
-            <StatCard icon={FaExclamationTriangle} label="Quá Hạn" value={stats.overdue} color={stats.overdue > 0 ? "text-neon-red" : "text-dim"} />
-            <StatCard icon={FaCoins} label="Phần Thưởng" value={stats.totalReward.toFixed(3)} color="text-neon-orange" sub="ETH" />
-          </div>
-        )
-      }
+      {/* Stats Dashboard */}
+      {diaChiVi && <StatsPanel />}
 
       {/* Filters */}
       <div className="bg-surface-elevated border border-border rounded-xl p-4">
