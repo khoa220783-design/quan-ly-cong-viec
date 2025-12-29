@@ -7,6 +7,8 @@ contract TaskManager {
         address assignedTo;
         string title;
         string description;
+        string category;
+        uint8 priority;
         uint256 deadline;
         uint256 reward;
         bool completed;
@@ -16,31 +18,37 @@ contract TaskManager {
     uint256 private _count;
     mapping(uint256 => Task) private _tasks;
 
-    event TaskCreated(uint256 indexed id, address indexed owner, string title, string desc, uint256 deadline);
-    event TaskUpdated(uint256 indexed id, string title, string desc, uint256 deadline);
+    event TaskCreated(uint256 indexed id, address indexed owner, string title, string desc, string category, uint8 priority, uint256 deadline);
+    event TaskUpdated(uint256 indexed id, string title, string desc, string category, uint8 priority, uint256 deadline);
     event TaskDeleted(uint256 indexed id);
 
-    function taoCongViec(string memory t, string memory d, uint256 h) public {
+    function taoCongViec(string memory t, string memory d, string memory cat, uint8 pri, uint256 h) public {
+        require(pri <= 2, "Invalid priority");
         _count++;
         _tasks[_count] = Task({
             owner: msg.sender,
             assignedTo: address(0),
             title: t,
             description: d,
+            category: cat,
+            priority: pri,
             deadline: h,
             reward: 0,
             completed: false,
             rewardClaimed: false
         });
-        emit TaskCreated(_count, msg.sender, t, d, h);
+        emit TaskCreated(_count, msg.sender, t, d, cat, pri, h);
     }
 
-    function suaCongViec(uint256 id, string memory t, string memory d, uint256 h) public {
+    function suaCongViec(uint256 id, string memory t, string memory d, string memory cat, uint8 pri, uint256 h) public {
         require(_tasks[id].owner == msg.sender, "Not owner");
+        require(pri <= 2, "Invalid priority");
         _tasks[id].deadline = h;
         _tasks[id].title = t;
         _tasks[id].description = d;
-        emit TaskUpdated(id, t, d, h);
+        _tasks[id].category = cat;
+        _tasks[id].priority = pri;
+        emit TaskUpdated(id, t, d, cat, pri, h);
     }
 
     function xoaCongViec(uint256 id) public {
@@ -84,13 +92,15 @@ contract TaskManager {
         address a,
         string memory t,
         string memory d,
+        string memory cat,
+        uint8 pri,
         uint256 dl,
         uint256 r,
         bool c,
         bool rd
     ) {
         Task memory task = _tasks[id];
-        return (task.owner, task.assignedTo, task.title, task.description, task.deadline, task.reward, task.completed, task.rewardClaimed);
+        return (task.owner, task.assignedTo, task.title, task.description, task.category, task.priority, task.deadline, task.reward, task.completed, task.rewardClaimed);
     }
 
     function demTongCongViec() public view returns (uint256) {
