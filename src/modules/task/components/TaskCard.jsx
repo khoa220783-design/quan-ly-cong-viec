@@ -3,12 +3,12 @@
  * @description Neo-Brutalist Task Card với terminal aesthetic
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaEdit, FaTrash, FaClock, FaUser, FaCoins, FaCheck, FaExclamationTriangle } from 'react-icons/fa';
 import { useContractContext } from '../../contract/ContractContext';
 import { useWalletContext } from '../../wallet/WalletContext';
 import { useTaskContext } from '../TaskContext';
-import { formatNgay, formatThoiGianConLai, formatDiaChi, formatSoDu } from '../../common/utils/format';
+import { formatNgay, formatDiaChi, formatSoDu } from '../../common/utils/format';
 import Badge from '../../common/components/Badge';
 import ConfirmDialog from '../../common/components/ConfirmDialog';
 
@@ -21,13 +21,67 @@ const TaskCard = ({ task, onEdit, index = 0 }) => {
   const [processingAction, setProcessingAction] = useState(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-  const isOwner = diaChiVi && task.owner.toLowerCase() === diaChiVi.toLowerCase();
-  const isAssigned = diaChiVi && task.nguoiDuocGan.toLowerCase() === diaChiVi.toLowerCase();
-  const canToggle = isOwner || isAssigned;
+  // Real-time countdown state
+  const [countdown, setCountdown] = useState('');
+  const [timeStatus, setTimeStatus] = useState({ isOverdue: false, isNearDeadline: false, isUrgent: false });
 
-  const now = Math.floor(Date.now() / 1000);
-  const isOverdue = Number(task.hanChot) < now && !task.daHoanThanh;
-  const isNearDeadline = Number(task.hanChot) - now < 86400 && Number(task.hanChot) > now;
+  // Real-time countdown effect - updates every second
+  useEffect(() => {
+    const updateCountdown = () => {
+      const now = Math.floor(Date.now() / 1000);
+      const deadline = Number(task.hanChot);
+      const diff = deadline - now;
+
+      // Update time status
+      const isOverdue = diff < 0 && !task.daHoanThanh;
+      const isNearDeadline = diff > 0 && diff < 86400; // < 24 hours
+      const isUrgent = diff > 0 && diff < 3600; // < 1 hour
+
+      setTimeStatus({ isOverdue, isNearDeadline, isUrgent });
+
+      if (task.daHoanThanh) {
+        setCountdown('✓ Đã hoàn thành');
+        return;
+      }
+
+      if (diff < 0) {
+        const absDiff = Math.abs(diff);
+        const days = Math.floor(absDiff / 86400);
+        const hours = Math.floor((absDiff % 86400) / 3600);
+        const mins = Math.floor((absDiff % 3600) / 60);
+        if (days > 0) {
+          setCountdown(`⚠️ Quá hạn ${days}d ${hours}h`);
+        } else if (hours > 0) {
+          setCountdown(`⚠️ Quá hạn ${hours}h ${mins}m`);
+        } else {
+          setCountdown(`⚠️ Quá hạn ${mins}m`);
+        }
+      } else {
+        const days = Math.floor(diff / 86400);
+        const hours = Math.floor((diff % 86400) / 3600);
+        const mins = Math.floor((diff % 3600) / 60);
+        const secs = diff % 60;
+
+        if (days > 0) {
+          setCountdown(`${days}d ${hours}h còn lại`);
+        } else if (hours > 0) {
+          setCountdown(`${hours}h ${mins}m còn lại`);
+        } else if (mins > 0) {
+          setCountdown(`${mins}m ${secs}s còn lại`);
+        } else {
+          setCountdown(`${secs}s còn lại`);
+        }
+      }
+    };
+
+    updateCountdown();
+    const interval = setInterval(updateCountdown, 1000);
+    return () => clearInterval(interval);
+  }, [task.hanChot, task.daHoanThanh]);
+
+  const isOwner = diaChiVi && task.owner?.toLowerCase() === diaChiVi.toLowerCase();
+  const isAssigned = diaChiVi && task.nguoiDuocGan?.toLowerCase() === diaChiVi.toLowerCase();
+  const canToggle = isOwner || isAssigned;
 
   const handleToggle = async () => {
     if (!canToggle || isProcessing) return;
@@ -64,14 +118,16 @@ const TaskCard = ({ task, onEdit, index = 0 }) => {
     }
   };
 
-  // Status config
+  // Status config - uses timeStatus from real-time countdown
   const status = task.daHoanThanh
     ? { variant: 'success', text: 'XONG' }
-    : isOverdue
+    : timeStatus.isOverdue
       ? { variant: 'danger', text: 'QUÁ HẠN' }
-      : isNearDeadline
-        ? { variant: 'warning', text: 'GẤP' }
-        : { variant: 'info', text: 'ĐANG CHẠY' };
+      : timeStatus.isUrgent
+        ? { variant: 'danger', text: 'KHẨN CẤP' }
+        : timeStatus.isNearDeadline
+          ? { variant: 'warning', text: 'GẤP' }
+          : { variant: 'info', text: 'ĐANG CHẠY' };
 
   return (
     <>
@@ -92,9 +148,10 @@ const TaskCard = ({ task, onEdit, index = 0 }) => {
       >
         {/* Status bar top */}
         <div className={`h-0.5 ${task.daHoanThanh ? 'bg-neon-green' :
-          isOverdue ? 'bg-neon-red' :
-            isNearDeadline ? 'bg-neon-orange' :
-              'bg-neon-cyan'
+          timeStatus.isOverdue ? 'bg-neon-red' :
+            timeStatus.isUrgent ? 'bg-neon-red animate-pulse' :
+              timeStatus.isNearDeadline ? 'bg-neon-orange' :
+                'bg-neon-cyan'
           }`} />
 
         <div className="p-4">
@@ -137,13 +194,16 @@ const TaskCard = ({ task, onEdit, index = 0 }) => {
               {isOwner && <Badge variant="success" size="xs">BẠN</Badge>}
             </div>
 
-            <div className={`flex items-center gap-2 font-mono text-xs ${isOverdue ? 'text-neon-red' :
-              isNearDeadline ? 'text-neon-orange' :
-                'text-muted'
+            <div className={`flex items-center gap-2 font-mono text-xs ${timeStatus.isOverdue ? 'text-neon-red' :
+              timeStatus.isUrgent ? 'text-neon-red animate-pulse' :
+                timeStatus.isNearDeadline ? 'text-neon-orange' :
+                  'text-muted'
               }`}>
               <FaClock className="w-3 h-3" />
               <span>{formatNgay(task.hanChot)}</span>
-              <span className="text-dim">({formatThoiGianConLai(task.hanChot)})</span>
+              <span className={`font-medium ${timeStatus.isUrgent ? 'text-neon-red' : timeStatus.isOverdue ? 'text-neon-red' : 'text-dim'}`}>
+                {countdown}
+              </span>
             </div>
 
             {task.tienThuong !== '0' && (
