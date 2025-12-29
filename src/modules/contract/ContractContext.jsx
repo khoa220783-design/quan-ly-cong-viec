@@ -47,14 +47,14 @@ export const ContractProvider = ({ children }) => {
   }, [signer]);
 
   // WRAPPER FUNCTIONS
-  const taoCongViec = async (tieuDe, moTa, hanChot) => {
+  const taoCongViec = async (tieuDe, moTa, danhMuc, doUuTien, hanChot) => {
     if (!contract) {
       toast.error('Vui lòng kết nối ví trước!');
       return null;
     }
     try {
       toast.loading('Đang tạo công việc...', { id: 'create-task' });
-      const tx = await contract.taoCongViec(tieuDe, moTa, hanChot);
+      const tx = await contract.taoCongViec(tieuDe, moTa, danhMuc, doUuTien, hanChot);
       toast.loading('Đang đợi xác nhận...', { id: 'create-task' });
       const receipt = await tx.wait();
       toast.success('Tạo công việc thành công!', { id: 'create-task' });
@@ -70,14 +70,14 @@ export const ContractProvider = ({ children }) => {
     }
   };
 
-  const suaCongViec = async (id, tieuDe, moTa, hanChot) => {
+  const suaCongViec = async (id, tieuDe, moTa, danhMuc, doUuTien, hanChot) => {
     if (!contract) {
       toast.error('Vui lòng kết nối ví trước!');
       return false;
     }
     try {
       toast.loading('Đang cập nhật...', { id: 'update-task' });
-      const tx = await contract.suaCongViec(id, tieuDe, moTa, hanChot);
+      const tx = await contract.suaCongViec(id, tieuDe, moTa, danhMuc, doUuTien, hanChot);
       await tx.wait();
       toast.success('Cập nhật thành công!', { id: 'update-task' });
       return true;
@@ -247,18 +247,22 @@ export const ContractProvider = ({ children }) => {
 
               const title = res[2] || (update ? update.args.title : e.args.title);
               const desc = res[3] || (update ? update.args.desc : e.args.desc);
+              const category = res[4] || (update ? update.args.category : e.args.category || '');
+              const priority = res[5] !== undefined ? res[5] : (update ? update.args.priority : e.args.priority || 0);
 
               return {
                 id: id,
                 owner: (res[0] || e.args.owner || '').toString(),
                 tieuDe: title,
                 moTa: desc,
-                hanChot: res[4], // deadline is now index 4
-                daHoanThanh: res[6], // completed is now index 6
-                tienThuong: res[5] || 0n, // reward is now index 5
+                danhMuc: category,
+                doUuTien: priority,
+                hanChot: res[6], // deadline is now index 6
+                daHoanThanh: res[8], // completed is now index 8
+                tienThuong: res[7] || 0n, // reward is now index 7
                 nguoiDuocGan: (res[1] || '0x0000000000000000000000000000000000000000').toString(),
                 thoiGianTao: 0n,
-                daNhanThuong: res[7] || false // rewardClaimed is now index 7
+                daNhanThuong: res[9] || false // rewardClaimed is now index 9
               };
             } catch (err) {
               console.error(`Lỗi parse task ${idStr}:`, err);
