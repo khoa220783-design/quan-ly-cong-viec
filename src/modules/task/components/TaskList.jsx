@@ -11,7 +11,6 @@ import { useWalletContext } from '../../wallet/WalletContext';
 import { TRANG_THAI } from '../../common/utils/constants';
 import TaskCard from './TaskCard';
 import TaskForm from './TaskForm';
-import StatsPanel from './StatsPanel';
 import Button from '../../common/components/Button';
 import Select from '../../common/components/Select';
 import { TaskCardSkeleton } from '../../common/components/Loading';
@@ -98,9 +97,6 @@ const TaskList = () => {
           </Button>
         )}
       </div>
-
-      {/* Stats Dashboard */}
-      {diaChiVi && <StatsPanel />}
 
       {/* Filters */}
       <div className="bg-surface-elevated border border-border rounded-xl p-4">
