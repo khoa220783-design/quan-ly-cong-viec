@@ -245,10 +245,13 @@ export const ContractProvider = ({ children }) => {
               const res = await c.getTaskInfo(id);
               const update = latestUpdates[idStr];
 
+              // Safely get title and desc from contract or events
               const title = res[2] || (update ? update.args.title : e.args.title);
               const desc = res[3] || (update ? update.args.desc : e.args.desc);
-              const category = res[4] || (update ? update.args.category : e.args.category || '');
-              const priority = res[5] !== undefined ? res[5] : (update ? update.args.priority : e.args.priority || 0);
+
+              // Safely get category and priority - handle both old and new events
+              const category = res[4] || (update?.args?.category) || (e.args?.category) || '';
+              const priority = res[5] !== undefined ? res[5] : (update?.args?.priority ?? e.args?.priority ?? 0);
 
               return {
                 id: id,
