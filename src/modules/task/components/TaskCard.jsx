@@ -11,6 +11,7 @@ import { useTaskContext } from '../TaskContext';
 import { formatNgay, formatDiaChi, formatSoDu } from '../../common/utils/format';
 import Badge from '../../common/components/Badge';
 import ConfirmDialog from '../../common/components/ConfirmDialog';
+import Identicon from '../../common/components/Identicon';
 
 const TaskCard = ({ task, onEdit, index = 0 }) => {
   const { danhDauHoanThanh, xoaCongViec } = useContractContext();
@@ -189,7 +190,7 @@ const TaskCard = ({ task, onEdit, index = 0 }) => {
           {/* Meta info */}
           <div className="space-y-1.5 mb-4">
             <div className="flex items-center gap-2 font-mono text-xs text-muted">
-              <FaUser className="w-3 h-3" />
+              <Identicon address={task.owner} size={20} className="rounded" />
               <span>{formatDiaChi(task.owner)}</span>
               {isOwner && <Badge variant="success" size="xs">BẠN</Badge>}
             </div>

@@ -11,6 +11,7 @@ import { useWalletContext } from '../../wallet/WalletContext';
 import { TRANG_THAI } from '../../common/utils/constants';
 import TaskCard from './TaskCard';
 import TaskForm from './TaskForm';
+import TaskDetailModal from './TaskDetailModal';
 import Button from '../../common/components/Button';
 import Select from '../../common/components/Select';
 import { TaskCardSkeleton } from '../../common/components/Loading';
@@ -23,6 +24,7 @@ const TaskList = () => {
   const [taskToEdit, setTaskToEdit] = useState(null);
   const [searchInput, setSearchInput] = useState('');
   const [viewMode, setViewMode] = useState('grid');
+  const [selectedTask, setSelectedTask] = useState(null); // For modal
 
   // Stats
   const stats = useMemo(() => {
@@ -216,14 +218,24 @@ const TaskList = () => {
         ) : (
           <div className={`grid gap-4 ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
             {danhSachCongViec.map((task, idx) => (
-              <TaskCard key={task.id} task={task} onEdit={(t) => { setTaskToEdit(t); setIsFormOpen(true); }} index={idx} />
+              <div key={task.id} onClick={() => setSelectedTask(task)} className="cursor-pointer">
+                <TaskCard task={task} onEdit={(t) => { setTaskToEdit(t); setIsFormOpen(true); }} index={idx} />
+              </div>
             ))}
           </div>
         )
       }
 
       <TaskForm isOpen={isFormOpen} onClose={() => { setIsFormOpen(false); setTaskToEdit(null); }} taskToEdit={taskToEdit} />
-    </div >
+
+      {/* Task Detail Modal */}
+      <TaskDetailModal
+        task={selectedTask}
+        isOpen={!!selectedTask}
+        onClose={() => setSelectedTask(null)}
+        onEdit={(t) => { setTaskToEdit(t); setIsFormOpen(true); }}
+      />
+    </div>
   );
 };
 
