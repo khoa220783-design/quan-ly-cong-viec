@@ -147,9 +147,12 @@ const TaskCard = ({ task, onEdit, index = 0 }) => {
             </div>
 
             {task.tienThuong !== '0' && (
-              <div className="flex items-center gap-2 font-mono text-xs text-neon-orange">
-                <FaCoins className="w-3 h-3" />
-                <span>{formatSoDu(task.tienThuong)}</span>
+              <div className="flex items-center justify-between gap-2 p-2 rounded-lg bg-gradient-to-r from-neon-orange/10 to-neon-yellow/10 border border-neon-orange/30 group-hover:border-neon-orange/50 transition-colors">
+                <div className="flex items-center gap-2">
+                  <FaCoins className="w-3.5 h-3.5 text-neon-orange" />
+                  <span className="font-mono text-xs font-medium text-neon-orange">Phần thưởng:</span>
+                </div>
+                <span className="font-display text-sm font-bold text-neon-orange">{formatSoDu(task.tienThuong)}</span>
               </div>
             )}
           </div>
