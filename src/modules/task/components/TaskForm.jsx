@@ -16,7 +16,7 @@ const TaskForm = ({ isOpen, onClose, taskToEdit = null }) => {
   const { taoCongViec, suaCongViec } = useContractContext();
   const { taiDanhSach } = useTaskContext();
 
-  const [formData, setFormData] = useState({ tieuDe: '', moTa: '', hanChot: '' });
+  const [formData, setFormData] = useState({ tieuDe: '', moTa: '', danhMuc: '', doUuTien: 0, hanChot: '' });
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -25,10 +25,12 @@ const TaskForm = ({ isOpen, onClose, taskToEdit = null }) => {
       setFormData({
         tieuDe: taskToEdit.tieuDe,
         moTa: taskToEdit.moTa,
+        danhMuc: taskToEdit.danhMuc || '',
+        doUuTien: taskToEdit.doUuTien || 0,
         hanChot: formatDateTimeLocal(taskToEdit.hanChot),
       });
     } else {
-      setFormData({ tieuDe: '', moTa: '', hanChot: '' });
+      setFormData({ tieuDe: '', moTa: '', danhMuc: '', doUuTien: 0, hanChot: '' });
     }
     setErrors({});
   }, [taskToEdit, isOpen]);
@@ -52,8 +54,8 @@ const TaskForm = ({ isOpen, onClose, taskToEdit = null }) => {
     setIsSubmitting(true);
     try {
       const result = taskToEdit
-        ? await suaCongViec(taskToEdit.id, formData.tieuDe, formData.moTa, hanChotTimestamp)
-        : await taoCongViec(formData.tieuDe, formData.moTa, hanChotTimestamp);
+        ? await suaCongViec(taskToEdit.id, formData.tieuDe, formData.moTa, formData.danhMuc, formData.doUuTien, hanChotTimestamp)
+        : await taoCongViec(formData.tieuDe, formData.moTa, formData.danhMuc, formData.doUuTien, hanChotTimestamp);
       if (result) {
         await taiDanhSach();
         onClose();
@@ -69,6 +71,7 @@ const TaskForm = ({ isOpen, onClose, taskToEdit = null }) => {
   const inputClasses = useMemo(() => ({
     tieuDe: `w-full px-4 py-3 bg-surface border rounded-lg font-mono text-sm text-primary placeholder:text-dim focus:outline-none focus:border-neon-green transition-colors ${errors.tieuDe ? 'border-neon-red' : 'border-border'}`,
     moTa: `w-full px-4 py-3 bg-surface border rounded-lg font-mono text-sm text-primary placeholder:text-dim focus:outline-none focus:border-neon-green transition-colors resize-none ${errors.moTa ? 'border-neon-red' : 'border-border'}`,
+    danhMuc: `w-full px-4 py-3 bg-surface border rounded-lg font-mono text-sm text-primary placeholder:text-dim focus:outline-none focus:border-neon-green transition-colors ${errors.danhMuc ? 'border-neon-red' : 'border-border'}`,
     hanChot: `w-full px-4 py-3 bg-surface border rounded-lg font-mono text-sm text-primary placeholder:text-dim focus:outline-none focus:border-neon-green transition-colors ${errors.hanChot ? 'border-neon-red' : 'border-border'}`,
   }), [errors]);
 
@@ -110,6 +113,38 @@ const TaskForm = ({ isOpen, onClose, taskToEdit = null }) => {
           {errors.moTa && (
             <p className="mt-1 font-mono text-xs text-neon-red"># Error: {errors.moTa}</p>
           )}
+        </div>
+
+        {/* Category */}
+        <div>
+          <label className="block font-mono text-xs text-muted uppercase tracking-wider mb-2">
+            Danh mục
+          </label>
+          <input
+            type="text"
+            name="danhMuc"
+            value={formData.danhMuc}
+            onChange={handleChange}
+            className={inputClasses.danhMuc}
+            placeholder="VD: Development, Design, Marketing..."
+          />
+        </div>
+
+        {/* Priority */}
+        <div>
+          <label className="block font-mono text-xs text-muted uppercase tracking-wider mb-2">
+            Độ ưu tiên
+          </label>
+          <select
+            name="doUuTien"
+            value={formData.doUuTien}
+            onChange={handleChange}
+            className="w-full px-4 py-3 bg-surface border border-border rounded-lg font-mono text-sm text-primary focus:outline-none focus:border-neon-green transition-colors"
+          >
+            <option value={0}>🟢 Thấp</option>
+            <option value={1}>🟡 Trung bình</option>
+            <option value={2}>🔴 Cao</option>
+          </select>
         </div>
 
         {/* Deadline */}
