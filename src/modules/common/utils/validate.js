@@ -3,8 +3,8 @@
  * @description Các hàm validation dữ liệu
  */
 
-import { ethers } from 'ethers';
-import { UI_CONFIG } from './constants';
+import { ethers } from "ethers";
+import { UI_CONFIG } from "./constants";
 
 /**
  * Kiểm tra địa chỉ Ethereum có hợp lệ không
@@ -13,10 +13,10 @@ import { UI_CONFIG } from './constants';
  */
 export const kiemTraDiaChi = (address) => {
   if (!address) return false;
-  
+
   try {
     return ethers.isAddress(address);
-  } catch (error) {
+  } catch {
     return false;
   }
 };
@@ -28,11 +28,11 @@ export const kiemTraDiaChi = (address) => {
  */
 export const kiemTraSoTien = (amount) => {
   if (!amount) return false;
-  
+
   try {
     const num = parseFloat(amount);
     return num > 0 && !isNaN(num);
-  } catch (error) {
+  } catch {
     return false;
   }
 };
@@ -46,20 +46,20 @@ export const kiemTraTieuDe = (title) => {
   if (!title || title.trim().length === 0) {
     return {
       valid: false,
-      message: 'Tiêu đề không được để trống'
+      message: "Tiêu đề không được để trống",
     };
   }
-  
+
   if (title.length > UI_CONFIG.MAX_TITLE_LENGTH) {
     return {
       valid: false,
-      message: `Tiêu đề không được quá ${UI_CONFIG.MAX_TITLE_LENGTH} ký tự`
+      message: `Tiêu đề không được quá ${UI_CONFIG.MAX_TITLE_LENGTH} ký tự`,
     };
   }
-  
+
   return {
     valid: true,
-    message: ''
+    message: "",
   };
 };
 
@@ -72,20 +72,20 @@ export const kiemTraMoTa = (description) => {
   if (!description || description.trim().length === 0) {
     return {
       valid: false,
-      message: 'Mô tả không được để trống'
+      message: "Mô tả không được để trống",
     };
   }
-  
+
   if (description.length > UI_CONFIG.MAX_DESCRIPTION_LENGTH) {
     return {
       valid: false,
-      message: `Mô tả không được quá ${UI_CONFIG.MAX_DESCRIPTION_LENGTH} ký tự`
+      message: `Mô tả không được quá ${UI_CONFIG.MAX_DESCRIPTION_LENGTH} ký tự`,
     };
   }
-  
+
   return {
     valid: true,
-    message: ''
+    message: "",
   };
 };
 
@@ -98,22 +98,22 @@ export const kiemTraHanChot = (deadline) => {
   if (!deadline) {
     return {
       valid: false,
-      message: 'Vui lòng chọn hạn chót'
+      message: "Vui lòng chọn hạn chót",
     };
   }
-  
+
   const now = Math.floor(Date.now() / 1000);
-  
+
   if (deadline <= now) {
     return {
       valid: false,
-      message: 'Hạn chót phải lớn hơn thời gian hiện tại'
+      message: "Hạn chót phải lớn hơn thời gian hiện tại",
     };
   }
-  
+
   return {
     valid: true,
-    message: ''
+    message: "",
   };
 };
 
@@ -124,28 +124,28 @@ export const kiemTraHanChot = (deadline) => {
  */
 export const validateFormCongViec = (data) => {
   const errors = {};
-  
+
   // Kiểm tra tiêu đề
   const tieuDeCheck = kiemTraTieuDe(data.tieuDe);
   if (!tieuDeCheck.valid) {
     errors.tieuDe = tieuDeCheck.message;
   }
-  
+
   // Kiểm tra mô tả
   const moTaCheck = kiemTraMoTa(data.moTa);
   if (!moTaCheck.valid) {
     errors.moTa = moTaCheck.message;
   }
-  
+
   // Kiểm tra hạn chót
   const hanChotCheck = kiemTraHanChot(data.hanChot);
   if (!hanChotCheck.valid) {
     errors.hanChot = hanChotCheck.message;
   }
-  
+
   return {
     valid: Object.keys(errors).length === 0,
-    errors
+    errors,
   };
 };
 
@@ -155,39 +155,39 @@ export const validateFormCongViec = (data) => {
  * @returns {object} - { valid: boolean, message: string }
  */
 export const validateTienThuong = (amount) => {
-  if (!amount || amount.trim() === '') {
+  if (!amount || amount.trim() === "") {
     return {
       valid: false,
-      message: 'Vui lòng nhập số tiền'
+      message: "Vui lòng nhập số tiền",
     };
   }
-  
+
   const num = parseFloat(amount);
-  
+
   if (isNaN(num)) {
     return {
       valid: false,
-      message: 'Số tiền không hợp lệ'
+      message: "Số tiền không hợp lệ",
     };
   }
-  
+
   if (num <= 0) {
     return {
       valid: false,
-      message: 'Số tiền phải lớn hơn 0'
+      message: "Số tiền phải lớn hơn 0",
     };
   }
-  
+
   if (num > 1000) {
     return {
       valid: false,
-      message: 'Số tiền quá lớn'
+      message: "Số tiền quá lớn",
     };
   }
-  
+
   return {
     valid: true,
-    message: ''
+    message: "",
   };
 };
 
@@ -198,30 +198,30 @@ export const validateTienThuong = (amount) => {
  * @returns {object} - { valid: boolean, message: string }
  */
 export const validateDiaChiNguoiNhan = (address, currentAddress) => {
-  if (!address || address.trim() === '') {
+  if (!address || address.trim() === "") {
     return {
       valid: false,
-      message: 'Vui lòng nhập địa chỉ người nhận'
+      message: "Vui lòng nhập địa chỉ người nhận",
     };
   }
-  
+
   if (!kiemTraDiaChi(address)) {
     return {
       valid: false,
-      message: 'Địa chỉ không hợp lệ'
+      message: "Địa chỉ không hợp lệ",
     };
   }
-  
+
   if (address.toLowerCase() === currentAddress.toLowerCase()) {
     return {
       valid: false,
-      message: 'Không thể gán cho chính mình'
+      message: "Không thể gán cho chính mình",
     };
   }
-  
+
   return {
     valid: true,
-    message: ''
+    message: "",
   };
 };
 
@@ -231,10 +231,10 @@ export const validateDiaChiNguoiNhan = (address, currentAddress) => {
  * @returns {string} - Chuỗi đã sanitize
  */
 export const sanitizeInput = (input) => {
-  if (!input) return '';
-  
+  if (!input) return "";
+
   return input
     .trim()
-    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '') // Remove script tags
-    .replace(/<[^>]*>/g, ''); // Remove HTML tags
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "") // Remove script tags
+    .replace(/<[^>]*>/g, ""); // Remove HTML tags
 };
